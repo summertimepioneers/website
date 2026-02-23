@@ -533,21 +533,142 @@ footer a:hover { text-decoration:underline; }
 }
 
 /* ══════════════════════════════════════════════════════
-   АДАПТИВ
+   БУРГЕР-КНОПКА — видна только на мобиле
+   Три полоски → анимируется в крестик при открытом меню
+   ══════════════════════════════════════════════════════ */
+.burger {
+  display:none;          /* скрыта на десктопе */
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+  width:36px; height:36px;
+  cursor:pointer;
+  background:none; border:none; padding:4px;
+  z-index:1100;          /* выше хедера чтобы не перекрывалась */
+}
+.burger span {
+  display:block; height:2px; border-radius:2px;
+  background:var(--gold);
+  transition:transform .3s ease, opacity .3s ease, width .3s ease;
+  transform-origin:center;
+}
+/* Состояние «открыто» — верхняя и нижняя полоски образуют X */
+.burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity:0; width:0; }
+.burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+/* ══════════════════════════════════════════════════════
+   АДАПТИВ — планшет (до 900px)
    ══════════════════════════════════════════════════════ */
 @media(max-width:900px) {
-  header { padding:0 16px; }
+  /* Хедер */
+  header { padding:0 16px; height:auto; min-height:var(--hh); flex-wrap:wrap; }
   .logo-text { font-size:17px; }
-  nav a { font-size:13px; padding:5px 8px; }
-  #about .about-inner, #contact .contact-inner, #form .form-layout { flex-direction:column; }
-  .form-card { display:none; } /* убираем боковую картинку на мобиле */
+
+  /* Показываем бургер */
+  .burger { display:flex; }
+
+  /* Навигация — выдвигается сверху при открытии */
+  nav {
+    display:flex;                       /* flex чтобы управлять через max-height */
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    width:100%;
+    /* Скрытое состояние: нулевая высота + невидимость */
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .4s ease, opacity .3s ease, padding .3s ease;
+    padding:0 0;
+    border-top:0px solid var(--border);
+  }
+  /* Открытое состояние — JS добавляет класс .open на nav */
+  nav.open {
+    max-height:500px;      /* достаточно чтобы вместить все пункты */
+    opacity:1;
+    padding:12px 0 16px;
+    border-top:1px solid var(--border);
+  }
+  nav a {
+    padding:12px 20px;     /* крупнее — удобно для пальца */
+    font-size:16px;
+    border-radius:0;
+    border-bottom:1px solid rgba(232,162,74,0.06);
+  }
+  nav a:last-child { border-bottom:none; }
+  /* Кнопка «Для кодеров» на мобиле — убираем скруглённую форму */
+  nav a.nav-dev-btn {
+    margin:10px 16px 4px;
+    border-radius:8px;
+    text-align:center;
+  }
+  /* Убираем анимированное подчёркивание на мобиле (там нет hover) */
+  nav a::after { display:none; }
+
+  /* Секции */
+  .section { padding:0 16px; margin:44px auto; }
+
+  /* О нас — картинка под текстом */
+  #about .about-inner { flex-direction:column; }
+  .about-card-wrap { flex:1 1 auto; width:100%; }
+  .card { height:180px; }
+
+  /* Команда — карточки на всю ширину */
+  #team .team-grid { gap:16px; }
   .team-card { width:100%; }
-  .section { padding:0 16px; margin:50px auto; }
+
+  /* Форма — убираем боковую картинку */
+  #form .form-layout { flex-direction:column; }
+  .form-card { display:none; }
+
+  /* Контакты — вертикально */
+  #contact .contact-inner { flex-direction:column; }
+  #contact .about-card-wrap { width:100%; }
+
+  /* Ссылки-контакты — на всю ширину */
+  .contact-link { width:100%; justify-content:flex-start; }
 }
+
+/* ══════════════════════════════════════════════════════
+   АДАПТИВ — смартфон (до 600px)
+   ══════════════════════════════════════════════════════ */
 @media(max-width:600px) {
-  nav .nav-dev-btn { display:none; } /* кнопку кодеров прячем — не влезает */
+  /* Hero */
+  .hero { min-height:100svh; padding:80px 16px 32px; }
+  .hero h1 { font-size:clamp(30px, 9vw, 48px); }
+  .hero p  { font-size:15px; margin-bottom:24px; }
+  .hero-btn { padding:12px 28px; font-size:15px; }
+  .scroll-indicator { margin-top:24px; }
+
+  /* Hero-pretitle — уменьшаем буквы */
+  .hero-pretitle { font-size:10px; letter-spacing:2px; padding:5px 12px; }
+
+  /* Заголовки разделов */
+  .section-title { font-size:24px; }
+
+  /* Моды — карточки не горизонтально скролятся, а нормального размера */
+  .mods-container { gap:16px; }
+  .mod-card { width:260px; height:148px; }
+
+  /* Форма */
+  .form-steps { flex-direction:column; gap:6px; }
+  .form-step-btn {
+    border-radius:8px !important;  /* убираем скруглённые только с торцов */
+    border:1px solid var(--border) !important;
+  }
+  .form-group input, .form-group textarea { font-size:16px; } /* >= 16px чтобы iOS не зумил */
   .date-row { flex-direction:column; }
   .date-row input { text-align:left; }
+  .toggle-buttons { gap:8px; }
+
+  /* Тост — чуть уже на мобиле */
+  .toast { font-size:13px; padding:12px 18px; white-space:normal; text-align:center; max-width:90vw; }
+
+  /* Модалка тегов */
+  .modal { padding:24px 16px; }
+  .tags-grid { gap:8px; }
+  .tags-grid button { font-size:13px; padding:7px 12px; }
 }
 </style>
 </head>
@@ -559,7 +680,24 @@ footer a:hover { text-decoration:underline; }
     <div class="logo-img"></div>
     <div class="logo-text">Summer Time Pioneers</div>
   </a>
-  <nav>
+
+  <!--
+    БУРГЕР-КНОПКА — видна только на мобиле (≤900px).
+    При клике JS переключает классы .open на кнопке и nav,
+    открывая/закрывая выпадающее меню.
+  -->
+  <button class="burger" id="burger" aria-label="Открыть меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!--
+    id="main-nav" нужен JS-у для управления открытием/закрытием.
+    На десктопе выглядит как обычная горизонтальная навигация.
+    На мобиле — выпадает вертикально под хедером.
+  -->
+  <nav id="main-nav">
     <a href="#about">О нас</a>
     <a href="#team">Команда</a>
     <a href="#mods">Моды</a>
@@ -567,10 +705,10 @@ footer a:hover { text-decoration:underline; }
     <a href="#contact">Контакты</a>
     <!--
       КНОПКА «ДЛЯ КОДЕРОВ»
-      Замените href="dev.html" на имя вашего файла или полный URL.
-      target="_blank" открывает в новой вкладке — уберите если хотите в той же.
+      Открывается в той же вкладке (target="_blank" убран).
+      Если нужна новая вкладка — добавьте target="_blank".
     -->
-    <a href="dev.html" class="nav-dev-btn" target="_blank">⌨ Для кодеров</a>
+    <a href="dev.html" class="nav-dev-btn">⌨ Для кодеров</a>
   </nav>
 </header>
 
@@ -814,8 +952,8 @@ footer a:hover { text-decoration:underline; }
           <span class="contact-icon">✈</span> Telegram канал
         </button>
         <!-- Почта студии -->
-        <a href="mailto:summertimepioneers@gmail.com" class="contact-link">
-          <span class="contact-icon">✉</span> summertimepioneers@gmail.com
+        <a href="/cdn-cgi/l/email-protection#98ebedf5f5fdeaecf1f5fde8f1f7f6fdfdeaebd8fff5f9f1f4b6fbf7f5" class="contact-link">
+          <span class="contact-icon">✉</span> <span class="__cf_email__" data-cfemail="fc8f899191998e889591998c95939299998e8fbc9b919d9590d29f9391">[email&#160;protected]</span>
         </a>
         <!-- Discord сервер -->
         <a href="https://discord.gg/BXa5GzS9MX" class="contact-link" target="_blank">
@@ -856,11 +994,46 @@ footer a:hover { text-decoration:underline; }
   <button class="modal-close-btn" onclick="closeTagsModal()">Готово</button>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ══════════════════════════════════════════════════════
    ВЫСОТА ХЕДЕРА — обновляем CSS-переменную по факту
+   (хедер на мобиле может быть выше из-за переноса)
    ══════════════════════════════════════════════════════ */
 document.documentElement.style.setProperty('--hh', document.querySelector('header').offsetHeight + 'px');
+
+/* ══════════════════════════════════════════════════════
+   БУРГЕР-МЕНЮ — открытие / закрытие мобильной навигации
+   Логика: кнопка и nav получают класс .open
+   CSS через max-height плавно показывает/скрывает nav
+   ══════════════════════════════════════════════════════ */
+const burger  = document.getElementById('burger');
+const mainNav = document.getElementById('main-nav');
+
+// Переключаем меню при клике на бургер
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  mainNav.classList.toggle('open');
+  // Пересчитываем высоту хедера — она меняется когда nav разворачивается
+  setTimeout(() => {
+    document.documentElement.style.setProperty('--hh', document.querySelector('header').offsetHeight + 'px');
+  }, 420); // чуть больше transition (400ms) чтобы поймать финальный размер
+});
+
+// Закрываем меню при клике на любой пункт навигации (и на #-ссылки, и на dev.html)
+mainNav.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    mainNav.classList.remove('open');
+  });
+});
+
+// Закрываем меню при клике вне хедера
+document.addEventListener('click', e => {
+  if (!e.target.closest('header')) {
+    burger.classList.remove('open');
+    mainNav.classList.remove('open');
+  }
+});
 
 /* ══════════════════════════════════════════════════════
    НАВИГАЦИЯ — плавный скролл + подсветка активного пункта
@@ -981,7 +1154,7 @@ document.getElementById('anketa-form').addEventListener('submit', e => {
       tags=[]; renderTags();
       document.querySelectorAll('.tags-grid button, .toggle-btn').forEach(b=>b.classList.remove('selected'));
       D.value=M.value=Y.value='';
-      document.getElementById('telegram').value='';
+           document.getElementById('telegram').value='';
       document.getElementById('about-field').value='';
       goStep(1);
     })
