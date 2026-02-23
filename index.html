@@ -362,7 +362,7 @@ nav a.nav-dev-btn::after { display:none; } /* без подчёркивания 
 /* Боковая картинка — sticky чтобы оставалась в виду при скролле формы */
 .form-card {
   flex:0 0 300px; height:500px; border-radius:16px;
-  background:url('https://i.postimg.cc/XqdZ5NTG/enhanced-image-7.png') center/cover no-repeat;
+  background:url('https://i.postimg.cc/c4cKhxjV/enhanced_image_(7)12.png') center/cover no-repeat;
   border:1px solid var(--border); box-shadow:0 0 40px rgba(232,162,74,0.1);
   position:sticky; top:calc(var(--hh) + 20px);
 }
@@ -464,6 +464,11 @@ nav a.nav-dev-btn::after { display:none; } /* без подчёркивания 
 /* Кнопка-контакт (для недоступных ссылок) — выглядит идентично ссылке */
 .contact-link-btn {
   cursor:pointer; font-family:'Nunito',sans-serif; font-size:15px;
+}
+/* Подсказка «нажми чтобы скопировать» — маленькая, появляется рядом с адресом */
+.contact-copy-hint {
+  font-size:11px; color:var(--muted); font-weight:400;
+  margin-left:4px; opacity:0.7;
 }
 .contact-icon { font-size:18px; }
 
@@ -761,16 +766,16 @@ footer a:hover { text-decoration:underline; }
          href        → ссылка Telegram
     ──────────────────────────────────────────────── -->
     <div class="team-card">
-      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-avatar" style="background-image:url('https://i.postimg.cc/kMYMg20c/Faund.png')"></div>
       <div class="team-name">Артём</div>
-      <div class="team-role">Сценарист · Художник</div>
+      <div class="team-role">Founder</div>
       <div class="team-meta">Стаж: 4 года<br>Возраст: -- лет</div>
       <div class="team-contact"><a href="https://t.me/example1" target="_blank">@LoneFea</a></div>
     </div>
 
     <!-- ── Участник 2 ── -->
     <div class="team-card">
-      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-avatar" style="background-image:url('https://i.postimg.cc/Px4x4KVg/Koder.png')"></div>
       <div class="team-name">Дмитрий</div>
       <div class="team-role">Программист</div>
       <div class="team-meta">Стаж: 3 года<br>Возраст: -- лет</div>
@@ -779,7 +784,7 @@ footer a:hover { text-decoration:underline; }
 
     <!-- ── Участник 3 ── -->
     <div class="team-card">
-      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-avatar" style="background-image:url('https://i.postimg.cc/26FqtCyK/scenarist.png')"></div>
       <div class="team-name">Роман</div>
       <div class="team-role">Сценарист</div>
       <div class="team-meta">Стаж: 3 года<br>Возраст: -- лет</div>
@@ -797,7 +802,7 @@ footer a:hover { text-decoration:underline; }
     ════════════════════════════════════════════════
     -->
     <div class="team-card">
-      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-avatar" style="background-image:url('https://i.postimg.cc/SNjs6666/Hudoznik.png')"></div>
       <div class="team-name">Екатерина</div>
       <div class="team-role">Художник</div>
       <div class="team-meta">Стаж: 2 года<br>Возраст: -- лет</div>
@@ -952,9 +957,19 @@ footer a:hover { text-decoration:underline; }
           <span class="contact-icon">✈</span> Telegram канал
         </button>
         <!-- Почта студии -->
-        <a href="/cdn-cgi/l/email-protection#98ebedf5f5fdeaecf1f5fde8f1f7f6fdfdeaebd8fff5f9f1f4b6fbf7f5" class="contact-link">
-          <span class="contact-icon">✉</span> <span class="__cf_email__" data-cfemail="fc8f899191998e889591998c95939299998e8fbc9b919d9590d29f9391">[email&#160;protected]</span>
-        </a>
+        <!--
+          Почта студии — при клике копирует адрес в буфер обмена
+          и показывает тост-подтверждение. Адрес виден в тексте кнопки.
+          Если хотите изменить почту — поменяйте значение в data-email
+          и текст внутри <span class="contact-email-text">
+        -->
+        <button class="contact-link contact-link-btn"
+                data-email="summertimepioneers@gmail.com"
+                onclick="copyEmail(this)">
+          <span class="contact-icon">✉</span>
+          <span class="contact-email-text">summertimepioneers@gmail.com</span>
+          <span class="contact-copy-hint">нажми чтобы скопировать</span>
+        </button>
         <!-- Discord сервер -->
         <a href="https://discord.gg/BXa5GzS9MX" class="contact-link" target="_blank">
           <span class="contact-icon">💬</span> Discord сервер
@@ -1064,6 +1079,27 @@ function showToast(msg, dur) {
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   setTimeout(() => toastEl.classList.remove('show'), dur || 3500);
+}
+
+/* ══════════════════════════════════════════════════════
+   КОПИРОВАНИЕ ПОЧТЫ
+   Берёт адрес из атрибута data-email кнопки,
+   копирует в буфер и показывает тост-подтверждение.
+   ══════════════════════════════════════════════════════ */
+function copyEmail(btn) {
+  const email = btn.dataset.email;
+  navigator.clipboard.writeText(email).then(() => {
+    showToast('✉ Почта скопирована: ' + email, 3000);
+  }).catch(() => {
+    /* Фоллбек для старых браузеров без Clipboard API */
+    const tmp = document.createElement('input');
+    tmp.value = email;
+    document.body.appendChild(tmp);
+    tmp.select();
+    document.execCommand('copy');
+    document.body.removeChild(tmp);
+    showToast('✉ Почта скопирована: ' + email, 3000);
+  });
 }
 
 /* ══════════════════════════════════════════════════════
