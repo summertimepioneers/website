@@ -155,8 +155,8 @@ nav a.nav-dev-btn::after { display:none; } /* без подчёркивания 
 }
 /* Главный заголовок — градиентный текст */
 .hero h1 {
-  font-family:'Russo One', sans-serif;
-  font-size:clamp(38px, 6vw, 72px); font-weight:400; line-height:1.15;
+  font-family:'Nunito', sans-serif;
+  font-size:clamp(38px, 6vw, 72px); font-weight:800; line-height:1.15;
   margin-bottom:20px;
   background:linear-gradient(135deg, #f5d89a 0%, var(--gold) 40%, var(--rose) 80%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
@@ -461,6 +461,10 @@ nav a.nav-dev-btn::after { display:none; } /* без подчёркивания 
   transition:background .25s, border-color .25s, transform .25s;
 }
 .contact-link:hover { background:var(--bg-card2); border-color:rgba(232,162,74,0.4); transform:translateX(4px); }
+/* Кнопка-контакт (для недоступных ссылок) — выглядит идентично ссылке */
+.contact-link-btn {
+  cursor:pointer; font-family:'Nunito',sans-serif; font-size:15px;
+}
 .contact-icon { font-size:18px; }
 
 /* ══════════════════════════════════════════════════════
@@ -755,6 +759,7 @@ footer a:hover { text-decoration:underline; }
               <button type="button" class="toggle-btn" data-value="yes">Да</button>
               <button type="button" class="toggle-btn" data-value="no">Нет</button>
             </div>
+            <input type="hidden" id="team-exp" name="team-experience" />
           </div>
           <div class="form-nav">
             <button type="button" class="btn-next" onclick="goStep(2)">Далее →</button>
@@ -804,15 +809,17 @@ footer a:hover { text-decoration:underline; }
     <div class="section-text">
       <p>Есть вопросы, идеи для сотрудничества или просто хотите написать? Мы всегда открыты к общению.</p>
       <div class="contact-links">
-        <!-- Замените ссылки и подписи на свои -->
-        <a href="https://t.me/yourtelegram" class="contact-link" target="_blank">
+        <!-- Telegram — временно недоступен, показывает тост при клике -->
+        <button class="contact-link contact-link-btn" onclick="showToast('⏳ Telegram канал временно недоступен', 3000)">
           <span class="contact-icon">✈</span> Telegram канал
+        </button>
+        <!-- Почта студии -->
+        <a href="mailto:summertimepioneers@gmail.com" class="contact-link">
+          <span class="contact-icon">✉</span> summertimepioneers@gmail.com
         </a>
-        <a href="/cdn-cgi/l/email-protection#03707776676a6c43667b626e736f662d606c6e" class="contact-link">
-          <span class="contact-icon">✉</span> <span class="__cf_email__" data-cfemail="15666160717c7a55706d74786579703b767a78">[email&#160;protected]</span>
-        </a>
-        <a href="https://steamcommunity.com/groups/yourgroupid" class="contact-link" target="_blank">
-          <span class="contact-icon">🎮</span> Steam группа
+        <!-- Discord сервер -->
+        <a href="https://discord.gg/BXa5GzS9MX" class="contact-link" target="_blank">
+          <span class="contact-icon">💬</span> Discord сервер
         </a>
       </div>
     </div>
@@ -824,7 +831,7 @@ footer a:hover { text-decoration:underline; }
 
 <!-- ═══ ФУТЕР ═══ -->
 <footer>
-  <p>© 2025 Summer Time Pioneers &nbsp;·&nbsp; Фанатская студия по
+  <p>© 2026 Summer Time Pioneers &nbsp;·&nbsp; Фанатская студия по
   <a href="https://store.steampowered.com/app/331470/Everlasting_Summer/" target="_blank">Бесконечному лету</a></p>
 </footer>
 
@@ -915,11 +922,13 @@ function goStep(s) {
   document.querySelector('.form-step-btn[data-step="'+s+'"]').classList.add('active');
 }
 
-/* Кнопки Да/Нет */
+/* Кнопки Да/Нет — записывают значение в скрытое поле для отправки */
 document.querySelectorAll('.toggle-btn').forEach(b => {
   b.addEventListener('click', () => {
     document.querySelectorAll('.toggle-btn').forEach(x => x.classList.remove('selected'));
     b.classList.add('selected');
+    const field = document.getElementById('team-exp');
+    if (field) field.value = b.dataset.value === 'yes' ? 'Да' : 'Нет';
   });
 });
 
