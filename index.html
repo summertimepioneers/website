@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Summer Time Pioneers</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/50S1KxmB/3.png" />
+
+  <!--
+    ШРИФТЫ:
+    - Lobster      → логотип в хедере
+    - Nunito       → основной текст, кнопки, подписи
+    - Russo One    → заголовки разделов (читабельный, чёткий, кириллица отличная)
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Nunito:wght@300;400;600;700&family=Lobster&display=swap" rel="stylesheet" />
+
+<style>
+/* ══════════════════════════════════════════════════════
+   ПЕРЕМЕННЫЕ — палитра «Бесконечного лета»
+   Меняйте цвета здесь и они применятся по всему сайту
+   ══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0e0a0f;               /* фон страницы — ночное небо        */
+  --bg-card:   #1a1018;               /* фон тёмных карточек               */
+  --bg-card2:  #231828;               /* фон чуть светлее (модалки и т.д.) */
+  --gold:      #e8a24a;               /* золото заката                     */
+  --amber:     #d4692a;               /* янтарный                          */
+  --rose:      #c4507a;               /* розовый закат                     */
+  --lavender:  #9b6eb5;               /* лавандовый сумрак                 */
+  --text:      #f0e6d3;               /* тёплый почти-белый                */
+  --muted:     #9a8878;               /* приглушённый текст                */
+  --border:    rgba(232,162,74,0.2);  /* золотая рамка                     */
+  --glow:      rgba(232,162,74,0.12); /* фон при наведении на пункт меню   */
+  --hh:        70px;                  /* высота хедера (обновляется в JS)  */
+}
+
+/* ══════════════════════════════════════════════════════
+   СБРОС И БАЗОВЫЕ СТИЛИ
+   ══════════════════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Nunito', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* Зерно плёнки поверх всего — декоративный шум */
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999; opacity:0.4;
+}
+
+/* ══════════════════════════════════════════════════════
+   ХЕДЕР
+   ══════════════════════════════════════════════════════ */
+header {
+  height:var(--hh);
+  background:rgba(14,10,15,0.93);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  padding:0 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:1000;
+}
+
+/* Логотип */
+.logo-wrap { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.logo-img {
+  width:38px; height:38px;
+  background:url('https://i.postimg.cc/50S1KxmB/3.png') center/contain no-repeat;
+  filter:drop-shadow(0 0 8px rgba(232,162,74,0.5));
+}
+.logo-text {
+  font-family:'Lobster', cursive; font-size:22px;
+  color:var(--gold); text-shadow:0 0 20px rgba(232,162,74,0.4);
+}
+
+/* Навигация */
+nav { display:flex; align-items:center; gap:4px; }
+nav a {
+  position:relative; padding:6px 14px;
+  color:var(--muted); text-decoration:none;
+  font-size:15px; font-weight:600; border-radius:6px;
+  transition:color .3s, background .3s;
+}
+nav a:hover { color:var(--text); background:var(--glow); }
+/* Золотая линия-подчёркивание при ховере и активном пункте */
+nav a::after {
+  content:''; position:absolute;
+  bottom:2px; left:14px; right:14px; height:2px;
+  background:linear-gradient(90deg, var(--amber), var(--gold));
+  border-radius:2px; transform:scaleX(0); transform-origin:right;
+  transition:transform .35s ease;
+}
+nav a:hover::after, nav a.active::after { transform:scaleX(1); transform-origin:left; }
+nav a.active { color:var(--gold); }
+
+/* Кнопка «Для кодеров» — выделена особым цветом
+   ЗАМЕНИТЕ href="dev.html" на реальный URL или имя файла */
+nav a.nav-dev-btn {
+  margin-left:8px; padding:6px 16px;
+  background:linear-gradient(135deg, rgba(155,110,181,0.2), rgba(196,80,122,0.2));
+  border:1px solid rgba(155,110,181,0.4);
+  border-radius:20px; color:var(--lavender) !important; font-weight:700;
+  transition:all .3s;
+}
+nav a.nav-dev-btn:hover {
+  background:linear-gradient(135deg, rgba(155,110,181,0.35), rgba(196,80,122,0.3));
+  border-color:rgba(155,110,181,0.7);
+  box-shadow:0 0 16px rgba(155,110,181,0.3);
+}
+nav a.nav-dev-btn::after { display:none; } /* без подчёркивания */
+
+/* ══════════════════════════════════════════════════════
+   HERO — главный экран
+   ══════════════════════════════════════════════════════ */
+.hero {
+  min-height:88vh;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  text-align:center; padding:60px 20px 40px;
+  position:relative; overflow:hidden;
+}
+
+/* Фон с тихим зумом */
+.hero-bg {
+  position:absolute; inset:0;
+  background:url('https://wallpaper.forfun.com/fetch/a8/a895279abff677cdbed52b0fc80c8a42.jpeg') center/cover no-repeat;
+  filter:brightness(0.35) saturate(1.3);
+  transform:scale(1.05);
+  animation:heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom { from{transform:scale(1.05)} to{transform:scale(1.12)} }
+
+/* Градиент снизу для плавного перехода в фон страницы */
+.hero-overlay {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(180,80,60,0.15), transparent),
+    linear-gradient(180deg, rgba(14,10,15,0.1) 0%, rgba(14,10,15,0) 40%, rgba(14,10,15,0.85) 100%);
+}
+.hero-content { position:relative; z-index:1; }
+
+/* Маленькая плашка над заголовком */
+.hero-pretitle {
+  display:inline-block; font-size:12px; font-weight:700;
+  letter-spacing:4px; text-transform:uppercase; color:var(--gold);
+  border:1px solid var(--border); padding:6px 16px; border-radius:20px;
+  margin-bottom:24px; background:rgba(232,162,74,0.08);
+  animation:fadeUp .8s ease both;
+}
+/* Главный заголовок — градиентный текст */
+.hero h1 {
+  font-family:'Russo One', sans-serif;
+  font-size:clamp(38px, 6vw, 72px); font-weight:400; line-height:1.15;
+  margin-bottom:20px;
+  background:linear-gradient(135deg, #f5d89a 0%, var(--gold) 40%, var(--rose) 80%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:fadeUp .8s .2s ease both;
+}
+.hero p {
+  max-width:620px; font-size:18px; font-weight:300; line-height:1.8;
+  color:rgba(240,230,211,0.8); margin:0 auto 36px;
+  animation:fadeUp .8s .4s ease both;
+}
+/* CTA кнопка */
+.hero-btn {
+  display:inline-block; padding:14px 36px;
+  background:linear-gradient(135deg, var(--amber), var(--rose));
+  color:#fff; font-family:'Nunito',sans-serif; font-weight:700; font-size:16px;
+  text-decoration:none; border-radius:8px; letter-spacing:0.5px;
+  box-shadow:0 4px 24px rgba(212,105,42,0.4);
+  transition:transform .25s, box-shadow .25s;
+  animation:fadeUp .8s .6s ease both;
+}
+.hero-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(212,105,42,0.55); }
+
+/* Индикатор прокрутки — в потоке строго под кнопкой */
+.scroll-indicator {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  margin-top:36px; animation:fadeUp .8s .9s ease both;
+}
+.scroll-indicator span { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); }
+.scroll-arrow {
+  width:24px; height:24px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+}
+.scroll-arrow::before, .scroll-arrow::after {
+  content:''; display:block; width:10px; height:10px;
+  border-right:2px solid var(--gold); border-bottom:2px solid var(--gold);
+  transform:rotate(45deg); opacity:0;
+  animation:arrowFade 1.4s ease-in-out infinite;
+}
+.scroll-arrow::before { animation-delay:0s; }
+.scroll-arrow::after  { animation-delay:.28s; }
+@keyframes arrowFade {
+  0%   { opacity:0; transform:rotate(45deg) translateY(-3px); }
+  50%  { opacity:1; }
+  100% { opacity:0; transform:rotate(45deg) translateY(3px); }
+}
+
+/* ══════════════════════════════════════════════════════
+   РАЗДЕЛИТЕЛЬ — горизонтальная линия со звёздочкой
+   ══════════════════════════════════════════════════════ */
+.divider {
+  width:100%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--border), transparent);
+  margin:10px 0; position:relative;
+}
+.divider::after {
+  content:'✦'; position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:var(--gold); font-size:14px; background:var(--bg); padding:0 10px;
+}
+
+/* ══════════════════════════════════════════════════════
+   СЕКЦИИ — общие стили
+   scroll-margin-top нужен чтобы заголовок не уезжал под хедер
+   ══════════════════════════════════════════════════════ */
+.section {
+  max-width:1100px; margin:70px auto; padding:0 30px;
+  scroll-margin-top:calc(var(--hh) + 24px);
+}
+
+/* Заголовок раздела — Nunito Bold, тот же шрифт что в навигации */
+.section-title {
+  font-family:'Nunito', sans-serif;
+  font-size:clamp(26px, 3.5vw, 38px); font-weight:700; letter-spacing:0.5px;
+  text-align:center; margin-bottom:12px; color:var(--text);
+}
+/* Золотая черта под заголовком */
+.section-title::after {
+  content:''; display:block; width:60px; height:3px;
+  background:linear-gradient(90deg, var(--amber), var(--gold));
+  border-radius:2px; margin:12px auto 40px;
+}
+.section-text { font-size:17px; line-height:1.9; color:rgba(240,230,211,0.75); flex:1 1 460px; }
+
+/* ══════════════════════════════════════════════════════
+   О НАС
+   ══════════════════════════════════════════════════════ */
+#about .about-inner { display:flex; flex-wrap:wrap; gap:40px; align-items:center; }
+
+/* Обёртка картинки с градиентной рамкой */
+.about-card-wrap { flex:1 1 320px; position:relative; }
+.about-card-wrap::before {
+  content:''; position:absolute; inset:-3px; border-radius:16px;
+  background:linear-gradient(135deg, var(--amber), var(--rose), var(--lavender));
+  z-index:0; opacity:0.7;
+}
+.card {
+  display:block; position:relative; z-index:1; height:220px; border-radius:14px;
+  background:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331470/capsule_616x353_russian.jpg?t=1741850740') center/cover no-repeat;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5); transition:transform .4s ease;
+}
+.card:hover { transform:scale(1.02); }
+
+/* ══════════════════════════════════════════════════════
+   КОМАНДА
+   overflow:visible нужен чтобы свечение аватарок не обрезалось!
+   ══════════════════════════════════════════════════════ */
+#team .team-grid { display:flex; flex-wrap:wrap; gap:24px; justify-content:center; }
+
+.team-card {
+  background:linear-gradient(160deg, var(--bg-card2), var(--bg-card));
+  border:1px solid var(--border); border-radius:16px;
+  padding:28px 24px; width:260px; text-align:center;
+  position:relative;
+  /* overflow:visible — важно! иначе свечение аватарки обрезается */
+  overflow:visible;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  transition:box-shadow .3s, transform .3s;
+}
+/* Цветная полоска сверху карточки */
+.team-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--amber), var(--rose));
+  border-radius:16px 16px 0 0;
+}
+.team-card:hover { box-shadow:0 12px 48px rgba(232,162,74,0.2); transform:translateY(-3px); }
+
+/* Аватарка — идеальный круг, overflow:visible на родителе чтобы свечение не резалось */
+.team-avatar {
+  width:80px; height:80px; margin:0 auto 16px; border-radius:50%;
+  background-size:cover; background-position:center;
+  border:3px solid var(--border);
+  /* свечение вокруг аватарки */
+  box-shadow:0 0 0 4px rgba(232,162,74,0.1), 0 0 20px rgba(232,162,74,0.25);
+}
+.team-name { font-family:'Russo One',sans-serif; font-size:18px; font-weight:400; color:var(--text); margin-bottom:6px; }
+.team-role { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:12px; }
+.team-meta { font-size:14px; color:var(--muted); line-height:1.8; margin-bottom:14px; }
+.team-contact a {
+  display:inline-block; font-size:14px; font-weight:700; color:var(--rose);
+  text-decoration:none; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(196,80,122,0.3); transition:background .2s;
+}
+.team-contact a:hover { background:rgba(196,80,122,0.15); }
+
+/* ══════════════════════════════════════════════════════
+   МОДЫ
+   overflow:visible на контейнере — чтобы свечение не обрезалось!
+   ══════════════════════════════════════════════════════ */
+#mods .mods-scroll {
+  /* padding нужен чтобы свечение по краям не обрезалось скроллом */
+  overflow-x:auto; overflow-y:visible;
+  padding:16px 4px 20px; cursor:grab;
+}
+#mods .mods-scroll:active { cursor:grabbing; }
+#mods .mods-scroll::-webkit-scrollbar { height:6px; }
+#mods .mods-scroll::-webkit-scrollbar-track { background:var(--bg-card); border-radius:4px; }
+#mods .mods-scroll::-webkit-scrollbar-thumb { background:var(--amber); border-radius:4px; }
+.mods-container { display:flex; gap:28px; min-width:max-content; padding:4px; }
+
+.mod-card {
+  width:280px; height:160px; border-radius:12px; flex-shrink:0;
+  position:relative; cursor:pointer;
+  /* overflow:visible — свечение box-shadow выходит за края и не обрезается */
+  overflow:visible;
+  border:1px solid var(--border);
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+/* Клип внутреннего содержимого (картинка, оверлей) — отдельный div */
+.mod-inner {
+  position:absolute; inset:0; border-radius:12px;
+  overflow:hidden; /* здесь обрезаем только содержимое, не внешнее свечение */
+  background-size:cover; background-position:center;
+}
+/* Тёмный градиент снизу карточки */
+.mod-inner::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.75) 100%);
+}
+/* Свечение при ховере — простой box-shadow, не conic-gradient */
+.mod-card:hover {
+  transform:scale(1.04);
+  box-shadow:
+    0 0 0 1px rgba(232,162,74,0.5),
+    0 0 20px rgba(232,162,74,0.4),
+    0 0 50px rgba(212,105,42,0.25),
+    0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* Бейдж "В разработке" или дата — поверх всего */
+.mod-badge {
+  position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+  background:rgba(14,10,15,0.88); color:var(--gold);
+  padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700;
+  letter-spacing:0.5px; border:1px solid var(--border);
+  white-space:nowrap; z-index:2; pointer-events:none;
+}
+
+/* ══════════════════════════════════════════════════════
+   АНКЕТА — многошаговая форма
+   ══════════════════════════════════════════════════════ */
+#form .form-layout { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-start; }
+
+/* Боковая картинка — sticky чтобы оставалась в виду при скролле формы */
+.form-card {
+  flex:0 0 300px; height:500px; border-radius:16px;
+  background:url('https://i.postimg.cc/XqdZ5NTG/enhanced-image-7.png') center/cover no-repeat;
+  border:1px solid var(--border); box-shadow:0 0 40px rgba(232,162,74,0.1);
+  position:sticky; top:calc(var(--hh) + 20px);
+}
+.form-wrapper { flex:1 1 380px; }
+.form-intro { font-size:16px; color:var(--muted); line-height:1.7; margin-bottom:32px; }
+
+/* Индикатор шагов */
+.form-steps { display:flex; gap:0; margin-bottom:32px; }
+.form-step-btn {
+  flex:1; padding:10px; text-align:center; font-size:13px; font-weight:700;
+  font-family:'Nunito',sans-serif; color:var(--muted); background:var(--bg-card);
+  border:1px solid var(--border); cursor:pointer; transition:all .25s; letter-spacing:0.5px;
+}
+.form-step-btn:first-child { border-radius:8px 0 0 8px; }
+.form-step-btn:last-child  { border-radius:0 8px 8px 0; }
+.form-step-btn.active {
+  background:linear-gradient(135deg, rgba(212,105,42,0.25), rgba(196,80,122,0.2));
+  color:var(--gold); border-color:rgba(232,162,74,0.4);
+}
+
+/* Панели шагов — показываем только активную */
+.form-panel { display:none; }
+.form-panel.active { display:block; animation:fadeUp .4s ease; }
+
+/* Поля формы */
+.form-group { margin-bottom:22px; }
+.form-group label {
+  display:block; font-size:13px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px;
+}
+.form-group input, .form-group textarea {
+  width:100%; padding:12px 16px; background:var(--bg-card); color:var(--text);
+  border:1px solid var(--border); border-radius:8px;
+  font-family:'Nunito',sans-serif; font-size:15px; outline:none;
+  transition:border-color .25s, box-shadow .25s;
+}
+.form-group input:focus, .form-group textarea:focus {
+  border-color:rgba(232,162,74,0.6); box-shadow:0 0 0 3px rgba(232,162,74,0.1);
+}
+.form-group input::placeholder, .form-group textarea::placeholder { color:var(--muted); }
+.form-group textarea { resize:vertical; min-height:110px; }
+
+.date-row { display:flex; gap:10px; }
+.date-row input { text-align:center; }
+
+.toggle-buttons { display:flex; gap:12px; }
+.toggle-btn {
+  flex:1; padding:12px; font-family:'Nunito',sans-serif; font-weight:700; font-size:15px;
+  color:var(--muted); background:var(--bg-card); border:1px solid var(--border);
+  border-radius:8px; cursor:pointer; transition:all .25s;
+}
+.toggle-btn:hover { border-color:rgba(232,162,74,0.4); color:var(--text); }
+.toggle-btn.selected {
+  background:linear-gradient(135deg, rgba(212,105,42,0.25), rgba(232,162,74,0.15));
+  border-color:var(--gold); color:var(--gold);
+}
+
+/* Поле выбора навыков — клик открывает модалку */
+.skills-tags {
+  display:flex; flex-wrap:wrap; gap:8px; padding:14px;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+  min-height:54px; cursor:pointer; transition:border-color .25s;
+}
+.skills-tags:hover { border-color:rgba(232,162,74,0.4); }
+.skills-tags .tag {
+  padding:4px 12px; background:rgba(232,162,74,0.15); color:var(--gold);
+  border-radius:20px; font-size:13px; font-weight:700; border:1px solid rgba(232,162,74,0.3);
+}
+.skills-tags .placeholder-text { color:var(--muted); font-size:14px; align-self:center; }
+
+.form-nav { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; }
+.btn-prev {
+  padding:12px 24px; background:transparent; color:var(--muted);
+  font-family:'Nunito',sans-serif; font-weight:700; font-size:15px;
+  border:1px solid var(--border); border-radius:8px; cursor:pointer; transition:all .25s;
+}
+.btn-prev:hover { color:var(--text); border-color:rgba(232,162,74,0.4); }
+.btn-next, .btn-submit {
+  padding:12px 28px; background:linear-gradient(135deg, var(--amber), var(--rose));
+  color:#fff; font-family:'Nunito',sans-serif; font-weight:700; font-size:15px;
+  border:none; border-radius:8px; cursor:pointer;
+  box-shadow:0 4px 16px rgba(212,105,42,0.3); transition:transform .25s, box-shadow .25s;
+}
+.btn-next:hover, .btn-submit:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(212,105,42,0.45); }
+
+/* ══════════════════════════════════════════════════════
+   КОНТАКТЫ
+   ══════════════════════════════════════════════════════ */
+#contact .contact-inner { display:flex; flex-wrap:wrap; gap:40px; align-items:center; }
+.contact-links { margin-top:20px; display:flex; flex-direction:column; gap:12px; }
+.contact-link {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:12px 20px; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:10px; color:var(--text); text-decoration:none;
+  font-weight:600; font-size:15px; width:fit-content;
+  transition:background .25s, border-color .25s, transform .25s;
+}
+.contact-link:hover { background:var(--bg-card2); border-color:rgba(232,162,74,0.4); transform:translateX(4px); }
+.contact-icon { font-size:18px; }
+
+/* ══════════════════════════════════════════════════════
+   ФУТЕР
+   ══════════════════════════════════════════════════════ */
+footer {
+  text-align:center; padding:30px 20px;
+  border-top:1px solid var(--border); font-size:13px; color:var(--muted);
+}
+footer a { color:var(--gold); text-decoration:none; }
+footer a:hover { text-decoration:underline; }
+
+/* ══════════════════════════════════════════════════════
+   ТОСТ — всплывающее уведомление снизу экрана
+   ══════════════════════════════════════════════════════ */
+.toast {
+  position:fixed; bottom:30px; left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--bg-card2); color:var(--text);
+  padding:14px 28px; border-radius:10px; font-size:15px; font-weight:600;
+  border:1px solid var(--border); box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  opacity:0; z-index:9000; transition:all .4s ease;
+  pointer-events:none; white-space:nowrap;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════════════════════
+   МОДАЛКА — выбор тегов навыков
+   ══════════════════════════════════════════════════════ */
+.backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:2000;
+}
+.modal {
+  display:none; position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0.95);
+  background:var(--bg-card2); border:1px solid var(--border);
+  padding:32px; border-radius:16px; z-index:2001; text-align:center;
+  max-width:480px; width:90%; box-shadow:0 24px 80px rgba(0,0,0,0.7);
+  transition:transform .3s ease;
+}
+.modal.open { transform:translate(-50%,-50%) scale(1); }
+.modal h3 { font-family:'Russo One',sans-serif; font-size:20px; font-weight:400; margin-bottom:20px; }
+.tags-grid { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:20px; }
+.tags-grid button {
+  padding:8px 16px; background:var(--bg-card); color:var(--muted);
+  border:1px solid var(--border); border-radius:20px;
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .2s;
+}
+.tags-grid button:hover { color:var(--text); border-color:rgba(232,162,74,0.4); }
+.tags-grid button.selected { background:rgba(232,162,74,0.15); color:var(--gold); border-color:rgba(232,162,74,0.5); }
+.modal-close-btn {
+  padding:10px 28px; background:linear-gradient(135deg, var(--amber), var(--rose));
+  color:#fff; font-family:'Nunito',sans-serif; font-weight:700; font-size:15px;
+  border:none; border-radius:8px; cursor:pointer; transition:transform .2s;
+}
+.modal-close-btn:hover { transform:translateY(-1px); }
+
+/* ══════════════════════════════════════════════════════
+   АНИМАЦИИ
+   ══════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════
+   АДАПТИВ
+   ══════════════════════════════════════════════════════ */
+@media(max-width:900px) {
+  header { padding:0 16px; }
+  .logo-text { font-size:17px; }
+  nav a { font-size:13px; padding:5px 8px; }
+  #about .about-inner, #contact .contact-inner, #form .form-layout { flex-direction:column; }
+  .form-card { display:none; } /* убираем боковую картинку на мобиле */
+  .team-card { width:100%; }
+  .section { padding:0 16px; margin:50px auto; }
+}
+@media(max-width:600px) {
+  nav .nav-dev-btn { display:none; } /* кнопку кодеров прячем — не влезает */
+  .date-row { flex-direction:column; }
+  .date-row input { text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ХЕДЕР ═══ -->
+<header>
+  <a class="logo-wrap" href="#hero">
+    <div class="logo-img"></div>
+    <div class="logo-text">Summer Time Pioneers</div>
+  </a>
+  <nav>
+    <a href="#about">О нас</a>
+    <a href="#team">Команда</a>
+    <a href="#mods">Моды</a>
+    <a href="#form">Анкета</a>
+    <a href="#contact">Контакты</a>
+    <!--
+      КНОПКА «ДЛЯ КОДЕРОВ»
+      Замените href="dev.html" на имя вашего файла или полный URL.
+      target="_blank" открывает в новой вкладке — уберите если хотите в той же.
+    -->
+    <a href="dev.html" class="nav-dev-btn" target="_blank">⌨ Для кодеров</a>
+  </nav>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-pretitle">✦ Мод-студия по Бесконечному лету ✦</span>
+    <h1>Оживляем лагерь<br>Совёнок снова</h1>
+    <p>Создаём атмосферные моды, рассказываем новые истории и сохраняем то тепло, которое делает «Бесконечное лето» особенным.</p>
+    <a href="#about" class="hero-btn">Узнать о нас</a>
+    <div class="scroll-indicator">
+      <span>Прокрути</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ О НАС ═══ -->
+<section id="about" class="section">
+  <h2 class="section-title">О нас</h2>
+  <div class="about-inner">
+    <p class="section-text">
+      Мы — команда энтузиастов, работающих над атмосферными модами по «Бесконечному лету».
+      Наша философия — не просто делать контент, а вызывать ностальгию, удивлять, трогать,
+      рушить шаблоны и снова влюблять в лагерь Совёнок. Каждый проект — это маленькая
+      история о лете, которое не заканчивается.
+    </p>
+    <div class="about-card-wrap">
+      <a href="https://store.steampowered.com/app/331470/Everlasting_Summer/" target="_blank" class="card"></a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ КОМАНДА ═══ -->
+<section id="team" class="section">
+  <h2 class="section-title">Наша команда</h2>
+  <div class="team-grid">
+
+    <!-- ── Участник 1 ──────────────────────────────
+         team-avatar → замените URL на фото
+         team-name   → имя
+         team-role   → роль
+         team-meta   → стаж и возраст
+         href        → ссылка Telegram
+    ──────────────────────────────────────────────── -->
+    <div class="team-card">
+      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-name">Артём</div>
+      <div class="team-role">Сценарист · Художник</div>
+      <div class="team-meta">Стаж: 2 года<br>Возраст: -- лет</div>
+      <div class="team-contact"><a href="https://t.me/example1" target="_blank">@example1</a></div>
+    </div>
+
+    <!-- ── Участник 2 ── -->
+    <div class="team-card">
+      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-name">Дмитрий</div>
+      <div class="team-role">Программист</div>
+      <div class="team-meta">Стаж: 3 года<br>Возраст: -- лет</div>
+      <div class="team-contact"><a href="https://t.me/example2" target="_blank">@example2</a></div>
+    </div>
+
+    <!-- ── Участник 3 ── -->
+    <div class="team-card">
+      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-name">Роман</div>
+      <div class="team-role">Сценарист</div>
+      <div class="team-meta">Стаж: 3 года<br>Возраст: -- лет</div>
+      <div class="team-contact"><a href="https://t.me/example3" target="_blank">@example3</a></div>
+    </div>
+
+    <!--
+    ════════════════════════════════════════════════
+    НОВЫЙ УЧАСТНИК — заполните поля:
+      background-image:url('ССЫЛКА НА ФОТО')
+      team-name   → имя
+      team-role   → роль
+      team-meta   → стаж / возраст
+      href        → ссылка Telegram
+    ════════════════════════════════════════════════
+    -->
+    <div class="team-card">
+      <div class="team-avatar" style="background-image:url('https://cdn-icons-png.flaticon.com/512/266/266033.png')"></div>
+      <div class="team-name">ИМЯ</div>
+      <div class="team-role">РОЛЬ</div>
+      <div class="team-meta">Стаж: -- лет<br>Возраст: -- лет</div>
+      <div class="team-contact"><a href="https://t.me/TELEGRAM" target="_blank">@TELEGRAM</a></div>
+    </div>
+    <!-- /НОВЫЙ УЧАСТНИК -->
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ МОДЫ ═══ -->
+<section id="mods" class="section">
+  <h2 class="section-title">Наши моды</h2>
+  <div class="mods-scroll">
+    <div class="mods-container">
+
+      <!--
+      ════════════════════════════════════════════════════════════
+      КАК ДОБАВИТЬ МОД:
+
+      Готовый мод (открывает страницу по клику):
+        <div class="mod-card" onclick="window.open('ССЫЛКА', '_blank')">
+          <div class="mod-inner" style="background-image:url('КАРТИНКА')"></div>
+        </div>
+
+      Мод в разработке (показывает тост с сообщением):
+        <div class="mod-card" data-toast="Текст сообщения">
+          <div class="mod-inner" style="background-image:url('КАРТИНКА')"></div>
+          <span class="mod-badge">В разработке</span>
+        </div>
+      ════════════════════════════════════════════════════════════
+      -->
+
+      <!-- Мод 1 — готовый, кликабельный -->
+      <div class="mod-card" onclick="window.open('https://steamcommunity.com/sharedfiles/filedetails/?id=3373523621','_blank')">
+        <div class="mod-inner" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331470/capsule_616x353_russian.jpg?t=1741850740')"></div>
+      </div>
+
+      <!-- Мод 2 — в разработке. data-toast — текст который появится при клике -->
+      <div class="mod-card" data-toast="Выход планируется в Q4 2025">
+        <div class="mod-inner" style="background-image:url('https://via.placeholder.com/460x260/1a1018/574040?text=Скоро')"></div>
+        <span class="mod-badge">В разработке</span>
+      </div>
+
+      <!-- Мод 3 — концепт -->
+      <div class="mod-card" data-toast="Пока на стадии концепта — Q1 2026">
+        <div class="mod-inner" style="background-image:url('https://via.placeholder.com/460x260/1a1018/574040?text=Концепт')"></div>
+        <span class="mod-badge">Концепт</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ АНКЕТА ═══ -->
+<section id="form" class="section">
+  <h2 class="section-title">Анкета</h2>
+  <div class="form-layout">
+    <div class="form-card"></div>
+    <div class="form-wrapper">
+      <p class="form-intro">Хочешь влиться в команду? Расскажи о себе — мы рассмотрим каждую анкету.</p>
+      <div class="form-steps">
+        <button class="form-step-btn active" data-step="1">1. Навыки</button>
+        <button class="form-step-btn"        data-step="2">2. О себе</button>
+        <button class="form-step-btn"        data-step="3">3. Контакт</button>
+      </div>
+      <form id="anketa-form"
+            name="anketa"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field">
+        <!--
+          Netlify автоматически обработает эту форму и пришлёт письмо.
+          Чтобы письма шли на summertimepioneers@gmail.com:
+            Netlify Dashboard → Site → Forms → Form notifications →
+            Add notification → Email notification → впишите адрес.
+          Эти скрытые поля обязательны для работы Netlify Forms:
+        -->
+        <input type="hidden" name="form-name" value="anketa" />
+        <p style="display:none"><input name="bot-field" /></p>
+        <!-- Шаг 1: навыки и работа в команде -->
+        <div class="form-panel active" data-panel="1">
+          <div class="form-group">
+            <label>Что вы умеете</label>
+            <div class="skills-tags" id="skills-display" onclick="openTagsModal()">
+              <span class="placeholder-text" id="skills-placeholder">Нажмите, чтобы выбрать навыки…</span>
+            </div>
+            <input type="hidden" id="skills" name="skills" />
+          </div>
+          <div class="form-group">
+            <label>Работали в команде раньше?</label>
+            <div class="toggle-buttons">
+              <button type="button" class="toggle-btn" data-value="yes">Да</button>
+              <button type="button" class="toggle-btn" data-value="no">Нет</button>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-next" onclick="goStep(2)">Далее →</button>
+          </div>
+        </div>
+        <!-- Шаг 2: дата рождения и о себе -->
+        <div class="form-panel" data-panel="2">
+          <div class="form-group">
+            <label>Дата рождения</label>
+            <div class="date-row">
+              <input type="text" id="day"   name="day"   placeholder="ДД"   maxlength="2">
+              <input type="text" id="month" name="month" placeholder="ММ"   maxlength="2">
+              <input type="text" id="year"  name="year"  placeholder="ГГГГ" maxlength="4">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Расскажите о себе</label>
+            <textarea id="about-field" name="about" placeholder="Опишите навыки, опыт, мотивацию…"></textarea>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(1)">← Назад</button>
+            <button type="button" class="btn-next" onclick="goStep(3)">Далее →</button>
+          </div>
+        </div>
+        <!-- Шаг 3: Telegram -->
+        <div class="form-panel" data-panel="3">
+          <div class="form-group">
+            <label>Ваш Telegram</label>
+            <input type="text" id="telegram" name="telegram" placeholder="@username">
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-prev" onclick="goStep(2)">← Назад</button>
+            <button type="submit" class="btn-submit">Отправить анкету ✦</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ КОНТАКТЫ ═══ -->
+<section id="contact" class="section">
+  <h2 class="section-title">Контакты</h2>
+  <div class="contact-inner">
+    <div class="section-text">
+      <p>Есть вопросы, идеи для сотрудничества или просто хотите написать? Мы всегда открыты к общению.</p>
+      <div class="contact-links">
+        <!-- Замените ссылки и подписи на свои -->
+        <a href="https://t.me/yourtelegram" class="contact-link" target="_blank">
+          <span class="contact-icon">✈</span> Telegram канал
+        </a>
+        <a href="/cdn-cgi/l/email-protection#03707776676a6c43667b626e736f662d606c6e" class="contact-link">
+          <span class="contact-icon">✉</span> <span class="__cf_email__" data-cfemail="15666160717c7a55706d74786579703b767a78">[email&#160;protected]</span>
+        </a>
+        <a href="https://steamcommunity.com/groups/yourgroupid" class="contact-link" target="_blank">
+          <span class="contact-icon">🎮</span> Steam группа
+        </a>
+      </div>
+    </div>
+    <div class="about-card-wrap" style="flex:0 1 300px">
+      <a href="#" class="card" style="background-image:url('https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/331470/capsule_616x353_russian.jpg?t=1741850740')"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ФУТЕР ═══ -->
+<footer>
+  <p>© 2025 Summer Time Pioneers &nbsp;·&nbsp; Фанатская студия по
+  <a href="https://store.steampowered.com/app/331470/Everlasting_Summer/" target="_blank">Бесконечному лету</a></p>
+</footer>
+
+<!-- Тост -->
+<div id="toast" class="toast"></div>
+
+<!-- Модалка тегов -->
+<div id="modal-backdrop" class="backdrop"></div>
+<div id="tags-modal" class="modal">
+  <h3>Выберите навыки</h3>
+  <div class="tags-grid">
+    <!-- Добавляйте/удаляйте кнопки — каждая это один тег навыка -->
+    <button data-tag="UI Редактор">UI Редактор</button>
+    <button data-tag="Художник">Художник</button>
+    <button data-tag="Кодер">Кодер</button>
+    <button data-tag="Сценарист">Сценарист</button>
+    <button data-tag="Редактор">Редактор</button>
+    <button data-tag="Работа с файлами">Работа с файлами</button>
+    <button data-tag="Композитор">Композитор</button>
+    <button data-tag="Менеджер">Менеджер</button>
+  </div>
+  <button class="modal-close-btn" onclick="closeTagsModal()">Готово</button>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ══════════════════════════════════════════════════════
+   ВЫСОТА ХЕДЕРА — обновляем CSS-переменную по факту
+   ══════════════════════════════════════════════════════ */
+document.documentElement.style.setProperty('--hh', document.querySelector('header').offsetHeight + 'px');
+
+/* ══════════════════════════════════════════════════════
+   НАВИГАЦИЯ — плавный скролл + подсветка активного пункта
+   ══════════════════════════════════════════════════════ */
+const navLinks = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior:'smooth' });
+  });
+});
+(function () {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting)
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { threshold:0.4, rootMargin:'-15% 0px -15% 0px' });
+  document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+})();
+
+/* ══════════════════════════════════════════════════════
+   ТОСТ — показать сообщение внизу экрана
+   ══════════════════════════════════════════════════════ */
+const toastEl = document.getElementById('toast');
+function showToast(msg, dur) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), dur || 3500);
+}
+
+/* ══════════════════════════════════════════════════════
+   МОДЫ — клик по карточке
+   Если есть data-toast → показываем тост
+   Если есть onclick   → открывает страницу (обработано inline)
+   ══════════════════════════════════════════════════════ */
+document.querySelectorAll('.mod-card[data-toast]').forEach(c => {
+  c.addEventListener('click', () => showToast('⏳ ' + c.dataset.toast));
+});
+
+/* ══════════════════════════════════════════════════════
+   DRAG-TO-SCROLL — перетаскивание мышью в блоке модов
+   ══════════════════════════════════════════════════════ */
+const ms = document.querySelector('.mods-scroll');
+let drag=false, sx, sl;
+ms.addEventListener('mousedown', e => { drag=true; sx=e.pageX-ms.offsetLeft; sl=ms.scrollLeft; });
+ms.addEventListener('mouseleave', () => drag=false);
+ms.addEventListener('mouseup',   () => drag=false);
+ms.addEventListener('mousemove', e => { if(!drag) return; e.preventDefault(); ms.scrollLeft=sl-(e.pageX-ms.offsetLeft-sx); });
+
+/* ══════════════════════════════════════════════════════
+   АНКЕТА — переключение шагов
+   ══════════════════════════════════════════════════════ */
+function goStep(s) {
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.form-step-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.form-panel[data-panel="'+s+'"]').classList.add('active');
+  document.querySelector('.form-step-btn[data-step="'+s+'"]').classList.add('active');
+}
+
+/* Кнопки Да/Нет */
+document.querySelectorAll('.toggle-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.toggle-btn').forEach(x => x.classList.remove('selected'));
+    b.classList.add('selected');
+  });
+});
+
+/* Автофокус при вводе даты — переходит к следующему полю */
+const D=document.getElementById('day'), M=document.getElementById('month'), Y=document.getElementById('year');
+D.addEventListener('input',()=>{ D.value=D.value.replace(/\D/g,'').slice(0,2); if(D.value.length===2) M.focus(); });
+M.addEventListener('input',()=>{ M.value=M.value.replace(/\D/g,'').slice(0,2); if(M.value.length===2) Y.focus(); });
+Y.addEventListener('input',()=>{ Y.value=Y.value.replace(/\D/g,'').slice(0,4); });
+
+/* ══════════════════════════════════════════════════════
+   ТЕГИ НАВЫКОВ — выбор в модалке
+   ══════════════════════════════════════════════════════ */
+const sd=document.getElementById('skills-display');
+const sp=document.getElementById('skills-placeholder');
+const si=document.getElementById('skills');
+const bd=document.getElementById('modal-backdrop');
+const tm=document.getElementById('tags-modal');
+let tags=[];
+
+function openTagsModal()  { bd.style.display='block'; tm.style.display='block'; requestAnimationFrame(()=>tm.classList.add('open')); }
+function closeTagsModal() { tm.classList.remove('open'); setTimeout(()=>{ bd.style.display='none'; tm.style.display='none'; },300); }
+bd.addEventListener('click', closeTagsModal);
+
+document.querySelectorAll('.tags-grid button').forEach(b => {
+  b.addEventListener('click', () => {
+    const t=b.dataset.tag;
+    tags.includes(t) ? (tags=tags.filter(x=>x!==t), b.classList.remove('selected')) : (tags.push(t), b.classList.add('selected'));
+    renderTags();
+  });
+});
+function renderTags() {
+  sd.querySelectorAll('.tag').forEach(e=>e.remove());
+  sp.style.display = tags.length ? 'none' : '';
+  tags.forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; sd.appendChild(s); });
+  si.value=tags.join(', ');
+}
+
+/* ══════════════════════════════════════════════════════
+   ОТПРАВКА АНКЕТЫ через Netlify Forms
+   Письмо придёт на summertimepioneers@gmail.com после того как
+   вы настроите: Netlify Dashboard → Site → Forms →
+   Form notifications → Email notification → вписать адрес
+   ══════════════════════════════════════════════════════ */
+document.getElementById('anketa-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const form = e.target;
+  fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams(new FormData(form)).toString() })
+    .then(() => {
+      showToast('✦ Анкета отправлена! Мы скоро свяжемся с тобой.', 4000);
+      tags=[]; renderTags();
+      document.querySelectorAll('.tags-grid button, .toggle-btn').forEach(b=>b.classList.remove('selected'));
+      D.value=M.value=Y.value='';
+      document.getElementById('telegram').value='';
+      document.getElementById('about-field').value='';
+      goStep(1);
+    })
+    .catch(() => showToast('Ошибка отправки. Попробуйте ещё раз.', 3500));
+});
+</script>
+</body>
+</html>

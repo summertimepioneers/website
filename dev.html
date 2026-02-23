@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Для кодеров — Summer Time Pioneers</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/50S1KxmB/3.png" />
+
+  <!--
+    ШРИФТЫ:
+    - Lobster    → логотип
+    - Nunito     → основной текст, описания
+    - Russo One  → заголовки секций и категорий
+    - JetBrains Mono → код (моноширинный, читабельный)
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Nunito:wght@300;400;600;700&family=Lobster&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!--
+    PrismJS — подсветка синтаксиса кода.
+    Используем тему «Tomorrow Night» — тёмная и читабельная.
+    Если нет интернета на сервере, скачайте эти файлы локально.
+  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+
+<style>
+/* ══════════════════════════════════════════════════════
+   ПЕРЕМЕННЫЕ — единая палитра с основным сайтом
+   ══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0e0a0f;
+  --bg-card:   #1a1018;
+  --bg-card2:  #231828;
+  --bg-code:   #141018;             /* фон блока кода — чуть темнее карточки */
+  --gold:      #e8a24a;
+  --amber:     #d4692a;
+  --rose:      #c4507a;
+  --lavender:  #9b6eb5;
+  --green:     #4caf7d;             /* успешное копирование */
+  --text:      #f0e6d3;
+  --muted:     #9a8878;
+  --border:    rgba(232,162,74,0.2);
+  --glow:      rgba(232,162,74,0.12);
+  --hh:        64px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Nunito', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+/* Зерно плёнки */
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999; opacity:0.4;
+}
+
+/* ══════════════════════════════════════════════════════
+   ХЕДЕР — только логотип и подзаголовок
+   ══════════════════════════════════════════════════════ */
+header {
+  height:var(--hh);
+  background:rgba(14,10,15,0.93);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  padding:0 40px;
+  display:flex; align-items:center; gap:20px;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:1000;
+}
+.logo-wrap { display:flex; align-items:center; gap:12px; text-decoration:none; }
+.logo-img {
+  width:34px; height:34px;
+  background:url('https://i.postimg.cc/50S1KxmB/3.png') center/contain no-repeat;
+  filter:drop-shadow(0 0 8px rgba(232,162,74,0.5));
+}
+.logo-text {
+  font-family:'Lobster', cursive; font-size:20px;
+  color:var(--gold); text-shadow:0 0 20px rgba(232,162,74,0.4);
+}
+/* Тонкий разделитель между логотипом и подзаголовком */
+.header-sep { width:1px; height:24px; background:var(--border); }
+.header-sub { font-size:13px; font-weight:600; color:var(--lavender); letter-spacing:1px; text-transform:uppercase; }
+
+/* ══════════════════════════════════════════════════════
+   HERO — короткая шапка страницы
+   ══════════════════════════════════════════════════════ */
+.dev-hero {
+  padding:60px 40px 40px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+  position:relative; overflow:hidden;
+}
+/* Фоновый радиальный градиент — атмосфера */
+.dev-hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 70% 100% at 50% 0%, rgba(155,110,181,0.12), transparent);
+  pointer-events:none;
+}
+.dev-hero h1 {
+  font-family:'Russo One', sans-serif; font-size:clamp(28px,4vw,48px);
+  font-weight:400; color:var(--text); margin-bottom:12px; position:relative;
+}
+/* Слово «кодеров» выделено лавандовым */
+.dev-hero h1 span { color:var(--lavender); }
+.dev-hero p {
+  font-size:16px; color:var(--muted); max-width:560px; margin:0 auto;
+  line-height:1.7; position:relative;
+}
+
+/* ══════════════════════════════════════════════════════
+   ОСНОВНОЙ LAYOUT — боковая панель + контент
+   ══════════════════════════════════════════════════════ */
+.dev-layout {
+  display:flex; min-height:calc(100vh - var(--hh));
+  align-items:flex-start;
+}
+
+/* ── Боковая панель навигации ────────────────────────── */
+.dev-sidebar {
+  width:260px; flex-shrink:0;
+  position:sticky; top:var(--hh);
+  height:calc(100vh - var(--hh));
+  overflow-y:auto; overflow-x:hidden;
+  border-right:1px solid var(--border);
+  padding:24px 0;
+}
+.dev-sidebar::-webkit-scrollbar { width:4px; }
+.dev-sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+/* Заголовок группы в сайдбаре */
+.sidebar-group { margin-bottom:8px; }
+.sidebar-group-title {
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px;
+  color:var(--muted); padding:8px 20px 4px; display:block;
+}
+/* Пункт меню сайдбара — клик разворачивает категорию */
+.sidebar-link {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 20px; font-size:14px; font-weight:600; color:var(--muted);
+  text-decoration:none; cursor:pointer; transition:color .2s, background .2s;
+  border:none; background:transparent; width:100%; text-align:left;
+}
+.sidebar-link:hover { color:var(--text); background:var(--glow); }
+.sidebar-link.active { color:var(--gold); }
+/* Стрелка раскрытия */
+.sidebar-link .arrow {
+  font-size:10px; transition:transform .25s;
+  color:var(--muted); flex-shrink:0; margin-left:8px;
+}
+.sidebar-link.open .arrow { transform:rotate(90deg); color:var(--gold); }
+
+/* Подпункты категории */
+.sidebar-sub { list-style:none; overflow:hidden; max-height:0; transition:max-height .3s ease; }
+.sidebar-sub.open { max-height:500px; }
+.sidebar-sub li a {
+  display:block; padding:6px 20px 6px 36px;
+  font-size:13px; color:var(--muted); text-decoration:none;
+  transition:color .2s, padding-left .2s;
+}
+.sidebar-sub li a:hover { color:var(--text); padding-left:40px; }
+.sidebar-sub li a.active { color:var(--gold); padding-left:40px; }
+
+/* ── Основной контент ────────────────────────────────── */
+.dev-content {
+  flex:1; padding:40px 48px;
+  min-width:0; /* важно для flex + pre overflow */
+}
+
+/* ══════════════════════════════════════════════════════
+   СЕКЦИЯ — верхний уровень (Функции / Переходы / и т.д.)
+   ══════════════════════════════════════════════════════ */
+.dev-section { margin-bottom:60px; scroll-margin-top:calc(var(--hh) + 20px); }
+
+.dev-section-title {
+  font-family:'Russo One', sans-serif; font-size:26px; font-weight:400;
+  color:var(--text); margin-bottom:6px; display:flex; align-items:center; gap:12px;
+}
+/* Цветной акцент слева */
+.dev-section-title::before {
+  content:''; display:block; width:4px; height:26px;
+  background:linear-gradient(180deg, var(--amber), var(--rose));
+  border-radius:2px; flex-shrink:0;
+}
+.dev-section-desc {
+  font-size:15px; color:var(--muted); margin-bottom:32px; padding-left:16px;
+}
+
+/* Горизонтальный разделитель внутри контента */
+.dev-divider {
+  height:1px; background:linear-gradient(90deg, var(--border), transparent);
+  margin:50px 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   КАТЕГОРИЯ — второй уровень (Спрайты / Диалоговое окно / …)
+   ══════════════════════════════════════════════════════ */
+.dev-category { margin-bottom:48px; scroll-margin-top:calc(var(--hh) + 20px); }
+
+.dev-category-title {
+  font-family:'Russo One', sans-serif; font-size:18px; font-weight:400;
+  color:var(--gold); margin-bottom:20px;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+
+/* ══════════════════════════════════════════════════════
+   БЛОК КОДА — описание + код + демо
+   ══════════════════════════════════════════════════════ */
+.code-block {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:28px;
+}
+
+/* Шапка блока кода */
+.code-block-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 18px;
+  background:var(--bg-card2);
+  border-bottom:1px solid var(--border);
+}
+.code-block-title {
+  font-size:14px; font-weight:700; color:var(--text);
+}
+/* Язык метка */
+.code-lang {
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+  color:var(--lavender); background:rgba(155,110,181,0.15);
+  padding:3px 10px; border-radius:20px;
+  border:1px solid rgba(155,110,181,0.3);
+}
+
+/* Описание кода — вы заполняете этот текст */
+.code-desc {
+  padding:16px 20px;
+  font-size:14px; color:var(--muted); line-height:1.8;
+  border-bottom:1px solid rgba(232,162,74,0.08);
+}
+
+/* Обёртка с кодом — relative для кнопки копирования */
+.code-wrap { position:relative; }
+
+/* Кнопка «Скопировать» */
+.copy-btn {
+  position:absolute; top:12px; right:12px;
+  padding:5px 14px; background:var(--bg-card2);
+  color:var(--muted); font-family:'Nunito',sans-serif;
+  font-size:12px; font-weight:700; border:1px solid var(--border);
+  border-radius:6px; cursor:pointer; z-index:2;
+  transition:color .2s, border-color .2s, background .2s;
+}
+.copy-btn:hover { color:var(--gold); border-color:rgba(232,162,74,0.4); }
+.copy-btn.copied { color:var(--green); border-color:rgba(76,175,125,0.4); background:rgba(76,175,125,0.08); }
+
+/* Блок с кодом — Prism подсвечивает содержимое */
+.code-wrap pre {
+  margin:0 !important;
+  padding:20px 20px 20px !important;
+  background:var(--bg-code) !important;
+  border-radius:0 !important;
+  font-family:'JetBrains Mono', monospace !important;
+  font-size:13px !important;
+  line-height:1.7 !important;
+  overflow-x:auto;
+  max-height:400px;      /* высокий код можно скроллить */
+  overflow-y:auto;
+}
+.code-wrap pre::-webkit-scrollbar { height:4px; width:4px; }
+.code-wrap pre::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+/* ══════════════════════════════════════════════════════
+   ДЕМО — картинка или гифка под кодом
+   ══════════════════════════════════════════════════════ */
+.code-demo {
+  padding:16px 20px 20px;
+  border-top:1px solid rgba(232,162,74,0.08);
+}
+.code-demo-label {
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--muted); margin-bottom:12px;
+}
+/* Само изображение/гифка */
+.code-demo img {
+  width:100%; max-width:640px; border-radius:8px;
+  border:1px solid var(--border);
+  display:block;
+}
+/* Если демо нет — заглушка */
+.code-demo-placeholder {
+  width:100%; max-width:640px; height:140px;
+  background:var(--bg-card2); border:1px dashed rgba(232,162,74,0.2);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:var(--muted);
+}
+
+/* ══════════════════════════════════════════════════════
+   АДАПТИВ
+   ══════════════════════════════════════════════════════ */
+@media(max-width:900px) {
+  .dev-sidebar { display:none; } /* на мобиле убираем сайдбар */
+  .dev-content { padding:24px 20px; }
+  .dev-hero { padding:40px 20px 30px; }
+  header { padding:0 20px; }
+}
+
+/* ══════════════════════════════════════════════════════
+   АНИМАЦИЯ
+   ══════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.dev-section { animation:fadeUp .5s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ═══ ХЕДЕР — только логотип ═══ -->
+<header>
+  <!-- Логотип ведёт на главную страницу -->
+  <a class="logo-wrap" href="index.html">
+    <div class="logo-img"></div>
+    <div class="logo-text">Summer Time Pioneers</div>
+  </a>
+  <div class="header-sep"></div>
+  <span class="header-sub">⌨ Для кодеров</span>
+</header>
+
+<!-- ═══ HERO-ШАПКА ═══ -->
+<div class="dev-hero">
+  <h1>База знаний <span>кодеров</span></h1>
+  <p>Коды, гифки и объяснения по модингу «Бесконечного лета» на Ren'Py. Выберите категорию слева.</p>
+</div>
+
+<!-- ═══ ОСНОВНОЙ LAYOUT ═══ -->
+<div class="dev-layout">
+
+  <!-- ── БОКОВАЯ ПАНЕЛЬ НАВИГАЦИИ ─────────────────────────────────────────
+       Структура:
+         .sidebar-group      — группа (Функции / Переходы / …)
+         .sidebar-link       — кнопка раскрытия группы
+         .sidebar-sub        — список подкатегорий внутри группы
+
+       Как добавить новую группу:
+         1. Скопируйте блок .sidebar-group
+         2. Укажите id секции в data-target кнопки
+         3. Добавьте подкатегории — li > a[href="#id_категории"]
+  ──────────────────────────────────────────────────────────────────────── -->
+  <aside class="dev-sidebar">
+
+    <!-- Группа 1: Функции -->
+    <div class="sidebar-group">
+      <span class="sidebar-group-title">Разделы</span>
+
+      <button class="sidebar-link open" data-target="sec-functions">
+        Функции <span class="arrow">▶</span>
+      </button>
+      <ul class="sidebar-sub open">
+        <!--
+          href="#id_категории" — должен совпадать с id блока .dev-category в контенте
+        -->
+        <li><a href="#cat-labels">Метки и переходы</a></li>
+        <li><a href="#cat-variables">Переменные</a></li>
+        <!-- ДОБАВЬТЕ СЮДА НОВЫЕ ПОДКАТЕГОРИИ -->
+      </ul>
+
+      <button class="sidebar-link" data-target="sec-transitions">
+        Переходы <span class="arrow">▶</span>
+      </button>
+      <ul class="sidebar-sub">
+        <li><a href="#cat-trans-dissolve">Dissolve</a></li>
+        <li><a href="#cat-trans-custom">Кастомные</a></li>
+        <!-- ДОБАВЬТЕ СЮДА НОВЫЕ ПОДКАТЕГОРИИ -->
+      </ul>
+
+      <button class="sidebar-link" data-target="sec-transforms">
+        Трансформы <span class="arrow">▶</span>
+      </button>
+      <ul class="sidebar-sub">
+        <li><a href="#cat-transform-move">Движение</a></li>
+        <li><a href="#cat-transform-scale">Масштаб</a></li>
+        <!-- ДОБАВЬТЕ СЮДА НОВЫЕ ПОДКАТЕГОРИИ -->
+      </ul>
+
+      <button class="sidebar-link" data-target="sec-visuals">
+        Визуал <span class="arrow">▶</span>
+      </button>
+      <ul class="sidebar-sub">
+        <li><a href="#cat-sprites">Спрайты</a></li>
+        <li><a href="#cat-dialog">Диалоговое окно</a></li>
+        <li><a href="#cat-bg">Фоны (BG)</a></li>
+        <li><a href="#cat-cg">CG-иллюстрации</a></li>
+        <!-- ДОБАВЬТЕ СЮДА НОВЫЕ ПОДКАТЕГОРИИ -->
+      </ul>
+    </div>
+
+  </aside>
+
+  <!-- ── ОСНОВНОЙ КОНТЕНТ ──────────────────────────────────────────────────
+       Структура:
+         .dev-section        — верхний уровень (Функции / Переходы / …)
+           .dev-category     — подкатегория (Спрайты / Диалог / …)
+             .code-block     — блок с кодом
+
+       Как добавить новый блок кода:
+         1. Вставьте .code-block внутри нужной .dev-category
+         2. Заполните .code-block-title (название)
+         3. Заполните .code-desc (описание)
+         4. Вставьте код внутрь <code class="language-renpy">
+         5. В .code-demo укажите url картинки/гифки
+  ──────────────────────────────────────────────────────────────────────── -->
+  <main class="dev-content">
+
+    <!-- ════════════════════════════════════════════
+         СЕКЦИЯ: ФУНКЦИИ
+         id должен совпадать с data-target в сайдбаре
+    ═════════════════════════════════════════════ -->
+    <section class="dev-section" id="sec-functions">
+      <h2 class="dev-section-title">Функции</h2>
+      <!--
+        ОПИСАНИЕ СЕКЦИИ — напишите здесь общее пояснение раздела
+      -->
+      <p class="dev-section-desc">Базовые конструкции Ren'Py: метки, условия, переменные и вызовы сцен.</p>
+
+      <!-- ── Подкатегория: Метки и переходы ── -->
+      <div class="dev-category" id="cat-labels">
+        <h3 class="dev-category-title">Метки и переходы</h3>
+
+        <!--
+          ════════════════════════════════════════════
+          БЛОК КОДА #1
+          Скопируйте этот блок чтобы добавить новый пример
+          ════════════════════════════════════════════
+        -->
+        <div class="code-block">
+          <!-- Шапка блока: название + метка языка -->
+          <div class="code-block-header">
+            <span class="code-block-title">Переход к метке</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+
+          <!--
+            ОПИСАНИЕ КОДА
+            Напишите здесь что делает этот код и как его использовать.
+            Поддерживается обычный HTML (жирный, ссылки и т.д.)
+          -->
+          <div class="code-desc">
+            Команда <code>jump</code> немедленно переходит к указанной метке.
+            Команда <code>call</code> переходит и возвращается обратно после окончания блока.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+
+          <!-- Обёртка кода с кнопкой копирования -->
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <!--
+              КОД — вставляйте ваш Ren'Py код внутрь тега <code>.
+              Prism автоматически подсветит синтаксис.
+              Используйте class="language-renpy" для подсветки Ren'Py,
+              или class="language-python" для Python.
+            -->
+            <pre><code class="language-python">label start:
+    "Добро пожаловать в Совёнок."
+    jump intro_scene          # безвозвратный переход
+
+label intro_scene:
+    scene bg summer_camp
+    "Лето. Всё только начинается."
+    call show_characters      # переход с возвратом
+
+label show_characters:
+    show eileen happy
+    return                    # возврат к месту вызова</code></pre>
+          </div>
+
+          <!--
+            ДЕМО — картинка или гифка с демонстрацией эффекта
+            Замените src на URL вашей картинки/гифки
+            Если демо нет — оставьте .code-demo-placeholder
+          -->
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <!--
+              ВАРИАНТ А — есть картинка/гифка:
+              <img src="URL_ГИФКИ_ИЛИ_КАРТИНКИ" alt="Демо" />
+
+              ВАРИАНТ Б — демо ещё нет (заглушка):
+            -->
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+        <!-- /БЛОК КОДА #1 — конец -->
+
+        <!--
+          ════════════════════════════════════
+          ДОБАВЬТЕ СЛЕДУЮЩИЙ БЛОК КОДА ЗДЕСЬ
+          (скопируйте блок выше и вставьте)
+          ════════════════════════════════════
+        -->
+
+      </div>
+      <!-- /Подкатегория: Метки и переходы -->
+
+      <!-- ── Подкатегория: Переменные ── -->
+      <div class="dev-category" id="cat-variables">
+        <h3 class="dev-category-title">Переменные</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Объявление и использование переменных</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            Переменные объявляются в блоке <code>init python</code> или через <code>default</code>.
+            Используйте их для хранения состояния (флаги, счётчики, имена персонажей).
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">default player_name = "Семён"   # имя игрока
+default affection = 0           # счётчик симпатии
+
+label day_one:
+    $ affection += 1            # изменяем переменную
+    "[player_name], доброе утро!"
+    if affection >= 5:
+        "Кажется, кто-то тебе доверяет."</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Подкатегория: Переменные -->
+
+    </section>
+    <!-- /СЕКЦИЯ: ФУНКЦИИ -->
+
+    <div class="dev-divider"></div>
+
+    <!-- ════════════════════════════════════════════
+         СЕКЦИЯ: ПЕРЕХОДЫ
+    ═════════════════════════════════════════════ -->
+    <section class="dev-section" id="sec-transitions">
+      <h2 class="dev-section-title">Переходы</h2>
+      <p class="dev-section-desc">Встроенные и кастомные переходы между сценами и экранами.</p>
+
+      <!-- ── Подкатегория: Dissolve ── -->
+      <div class="dev-category" id="cat-trans-dissolve">
+        <h3 class="dev-category-title">Dissolve</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Плавное растворение сцены</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            <code>dissolve</code> — базовый переход, встроен в Ren'Py.
+            Второй параметр — длительность в секундах.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">scene bg forest with dissolve         # стандартный dissolve
+
+# Кастомная скорость:
+define slow_dissolve = Dissolve(2.0)  # 2 секунды
+scene bg night with slow_dissolve</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Dissolve -->
+
+      <!-- ── Подкатегория: Кастомные переходы ── -->
+      <div class="dev-category" id="cat-trans-custom">
+        <h3 class="dev-category-title">Кастомные переходы</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">ImageDissolve — маскированный переход</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            <code>ImageDissolve</code> использует чёрно-белую маску: белые пиксели появляются первыми, чёрные — последними.
+            Отлично подходит для эффектов «разлита чернила», «снег», «вспышка».
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python"># Маска — изображение masks/wipe_left.png
+define wipe = ImageDissolve("masks/wipe_left.png", 1.0)
+
+scene bg classroom with wipe</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Кастомные переходы -->
+
+    </section>
+    <!-- /СЕКЦИЯ: ПЕРЕХОДЫ -->
+
+    <div class="dev-divider"></div>
+
+    <!-- ════════════════════════════════════════════
+         СЕКЦИЯ: ТРАНСФОРМЫ
+    ═════════════════════════════════════════════ -->
+    <section class="dev-section" id="sec-transforms">
+      <h2 class="dev-section-title">Трансформы</h2>
+      <p class="dev-section-desc">Позиционирование, движение и масштабирование объектов на экране.</p>
+
+      <!-- ── Подкатегория: Движение ── -->
+      <div class="dev-category" id="cat-transform-move">
+        <h3 class="dev-category-title">Движение</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">ATL-анимация — движение спрайта</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            ATL (Animation and Transformation Language) позволяет описывать анимации прямо в коде.
+            Блок <code>transform</code> описывает как объект движется, появляется, исчезает.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">transform slide_in_left:
+    xpos -300 ypos 0.8        # начальная позиция за экраном
+    linear 0.6 xpos 0.3       # плавный сдвиг вправо за 0.6с
+
+transform slide_in_right:
+    xpos 1300 ypos 0.8
+    linear 0.6 xpos 0.7
+
+# Применение:
+show eileen happy at slide_in_left</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Движение -->
+
+      <!-- ── Подкатегория: Масштаб ── -->
+      <div class="dev-category" id="cat-transform-scale">
+        <h3 class="dev-category-title">Масштаб</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Zoom — приближение / отдаление</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            <code>zoom</code> масштабирует объект от центра. 1.0 — нормальный размер, 2.0 — вдвое больше.
+            Комбинируйте с <code>linear</code> для анимации.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">transform zoom_in:
+    zoom 0.8 alpha 0
+    linear 0.5 zoom 1.0 alpha 1.0   # появление с увеличением
+
+show eileen happy at zoom_in</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Масштаб -->
+
+    </section>
+    <!-- /СЕКЦИЯ: ТРАНСФОРМЫ -->
+
+    <div class="dev-divider"></div>
+
+    <!-- ════════════════════════════════════════════
+         СЕКЦИЯ: ВИЗУАЛ
+    ═════════════════════════════════════════════ -->
+    <section class="dev-section" id="sec-visuals">
+      <h2 class="dev-section-title">Визуал</h2>
+      <p class="dev-section-desc">Работа со спрайтами, диалоговым окном, фонами и CG-иллюстрациями.</p>
+
+      <!-- ── Подкатегория: Спрайты ── -->
+      <div class="dev-category" id="cat-sprites">
+        <h3 class="dev-category-title">Спрайты</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Объявление и вывод спрайта</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            Спрайты объявляются через <code>image</code> или папочную систему Ren'Py.
+            Показываются командой <code>show</code>, убираются <code>hide</code>.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python"># Объявление спрайта (обычно в отдельном файле characters.rpy)
+image masha happy = "sprites/masha/happy.png"
+image masha sad   = "sprites/masha/sad.png"
+
+# Показ и смена состояния
+label scene_example:
+    show masha happy at center
+    "Маша улыбается."
+    show masha sad
+    "Но вдруг погрустнела."
+    hide masha with dissolve</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Спрайты -->
+
+      <!-- ── Подкатегория: Диалоговое окно ── -->
+      <div class="dev-category" id="cat-dialog">
+        <h3 class="dev-category-title">Диалоговое окно</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Кастомизация textbox через screens.rpy</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            Диалоговое окно определяется экраном <code>say</code> в файле <code>screens.rpy</code>.
+            Меняйте <code>background</code>, <code>xsize</code>, <code>ypos</code> для кастомного вида.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">screen say(who, what):
+    window:
+        id "window"
+        background "gui/textbox.png"   # ваш фон диалога
+        xsize 1280
+        ypos  0.75                     # позиция по вертикали (0-1)
+        padding (30, 20)
+
+        vbox:
+            if who:
+                text who id "who" style "say_label"
+            text what id "what" style "say_dialogue"</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Диалоговое окно -->
+
+      <!-- ── Подкатегория: Фоны (BG) ── -->
+      <div class="dev-category" id="cat-bg">
+        <h3 class="dev-category-title">Фоны (BG)</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Показ фона и смена времени суток</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            Фоны показываются командой <code>scene</code>. После <code>scene</code> можно сразу добавить переход.
+            Для смены времени суток удобно использовать отдельные файлы или LayeredImage.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python">image bg camp_day   = "backgrounds/camp_day.png"
+image bg camp_night = "backgrounds/camp_night.png"
+
+label evening:
+    scene bg camp_day with dissolve
+    "Тёплый летний день..."
+    scene bg camp_night with Dissolve(1.5)
+    "Наступила ночь."</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /Фоны -->
+
+      <!-- ── Подкатегория: CG ── -->
+      <div class="dev-category" id="cat-cg">
+        <h3 class="dev-category-title">CG-иллюстрации</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Показ CG и добавление в галерею</span>
+            <span class="code-lang">Ren'Py</span>
+          </div>
+          <div class="code-desc">
+            CG — полноэкранные иллюстрации. Показываются через <code>scene</code> без фоновых изображений.
+            Для галереи используйте встроенный класс <code>Gallery</code>.
+            <!-- ВСТАВЬТЕ ВАШЕ ОПИСАНИЕ ВЫШЕ -->
+          </div>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <pre><code class="language-python"># Показ CG
+label cg_scene:
+    scene black with fade
+    scene cg/summer_end with dissolve
+    "Последний вечер в лагере."
+    scene black with fade
+
+# Добавление в галерею (в init-блоке)
+init python:
+    g = Gallery()
+    g.button("summer_end")
+    g.image("cg/summer_end")
+    g.locked_button("summer_end_lock")</code></pre>
+          </div>
+          <div class="code-demo">
+            <div class="code-demo-label">Демонстрация</div>
+            <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /CG -->
+
+    </section>
+    <!-- /СЕКЦИЯ: ВИЗУАЛ -->
+
+    <!--
+    ══════════════════════════════════════════════════════
+    ДОБАВИТЬ НОВУЮ СЕКЦИЮ:
+      1. Скопируйте блок .dev-section выше
+      2. Укажите уникальный id (например id="sec-audio")
+      3. Добавьте пункт в сайдбар: .sidebar-link + .sidebar-sub
+
+    ДОБАВИТЬ НОВЫЙ БЛОК КОДА:
+      1. Найдите нужную .dev-category
+      2. Скопируйте .code-block и вставьте после предыдущего
+      3. Заполните заголовок, описание, код, демо
+    ══════════════════════════════════════════════════════
+    -->
+
+  </main>
+</div><!-- /dev-layout -->
+
+<!--
+  PrismJS — движок подсветки синтаксиса.
+  Если сайт работает без интернета, скачайте файл локально:
+  https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<!-- Дополнительный язык Python (Ren'Py базируется на Python) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   САЙДБАР — раскрытие/закрытие подкатегорий
+   ══════════════════════════════════════════════════════ */
+document.querySelectorAll('.sidebar-link[data-target]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const isOpen = btn.classList.contains('open');
+    // Закрываем все открытые группы
+    document.querySelectorAll('.sidebar-link.open').forEach(b => {
+      b.classList.remove('open');
+      b.nextElementSibling?.classList.remove('open');
+    });
+    // Если была закрыта — открываем
+    if (!isOpen) {
+      btn.classList.add('open');
+      btn.nextElementSibling?.classList.add('open');
+    }
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   КОПИРОВАНИЕ КОДА — кнопка «Копировать»
+   ══════════════════════════════════════════════════════ */
+function copyCode(btn) {
+  // Находим <code> внутри того же .code-wrap
+  const code = btn.closest('.code-wrap').querySelector('code');
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Копировать';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   ПОДСВЕТКА АКТИВНОГО ПУНКТА САЙДБАРА при скролле
+   ══════════════════════════════════════════════════════ */
+const allAnchors = document.querySelectorAll('.dev-section, .dev-category');
+const sidebarLinks = document.querySelectorAll('.sidebar-sub li a');
+
+const scrollObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      sidebarLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#'+id));
+    }
+  });
+}, { threshold:0.3, rootMargin:'-10% 0px -60% 0px' });
+
+allAnchors.forEach(el => scrollObs.observe(el));
+</script>
+</body>
+</html>
