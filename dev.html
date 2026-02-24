@@ -428,6 +428,52 @@ header {
 }
 
 /* ══════════════════════════════════════════════════════
+   КНОПКА «ПЕРЕЙТИ ДАЛЬШЕ» — между шагами внутри раздела
+   Использование: <button class="next-step-btn" data-goto="page-id" data-anchor="block-id">
+   ══════════════════════════════════════════════════════ */
+.next-step-btn {
+  display:inline-flex; align-items:center; gap:10px;
+  margin-top:28px; padding:13px 28px;
+  background:linear-gradient(135deg, var(--amber), var(--rose));
+  color:#fff; font-family:'Nunito',sans-serif; font-weight:700; font-size:15px;
+  border:none; border-radius:10px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(212,105,42,0.35);
+  transition:transform .25s, box-shadow .25s;
+}
+.next-step-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(212,105,42,0.5); }
+.next-step-btn .btn-arrow { font-size:17px; }
+
+/* ══════════════════════════════════════════════════════
+   БЛОК СКАЧИВАНИЯ АРХИВА
+   Выделен рамкой — привлекает внимание.
+   Используйте .download-block там где нужно предложить скачать файл.
+   ══════════════════════════════════════════════════════ */
+.download-block {
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+  background:linear-gradient(135deg, rgba(155,110,181,0.1), rgba(196,80,122,0.08));
+  border:1px solid rgba(155,110,181,0.35);
+  border-radius:12px; padding:20px 24px; margin:24px 0;
+}
+.download-block-info { flex:1 1 260px; }
+.download-block-icon { font-size:28px; margin-bottom:6px; }
+.download-block-title {
+  font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px;
+}
+.download-block-desc { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* Кнопка скачивания */
+.download-btn {
+  display:inline-flex; align-items:center; gap:8px; flex-shrink:0;
+  padding:11px 22px;
+  background:linear-gradient(135deg, var(--lavender), var(--rose));
+  color:#fff; font-family:'Nunito',sans-serif; font-weight:700; font-size:14px;
+  text-decoration:none; border-radius:8px;
+  box-shadow:0 4px 16px rgba(155,110,181,0.3);
+  transition:transform .25s, box-shadow .25s;
+}
+.download-btn:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(155,110,181,0.45); }
+
+/* ══════════════════════════════════════════════════════
    ТОСТ
    ══════════════════════════════════════════════════════ */
 .toast {
@@ -571,6 +617,7 @@ header {
     -->
     <ul class="sidebar-sub" id="sub-start">
       <li><button class="sidebar-sub-item" data-page="page-start" data-anchor="block-init">1. Init и регистрация мода</button></li>
+      <li><button class="sidebar-sub-item" data-page="page-start" data-anchor="block-sprites">2. Рабочая среда — sprite.rpy</button></li>
       <!-- ДОБАВЬТЕ СЮДА НОВЫЕ ПОДПУНКТЫ РАЗДЕЛА -->
     </ul>
 
@@ -741,9 +788,10 @@ header {
           <pre><code class="language-python"># =============================================
 #          ИНИЦИАЛИЗАЦИЯ МОДА
 # =============================================
-init:
+
 # Пути к шрифтам (файлы шрифтов должны лежать по этим путям)
 define (ваше_название)_font_path = "mods/(ваше_название)/(ваше_название)_fonts/(ваше_название)_font.ttf"
+define (ваше_название)_fantasy_font_path = "mods/(ваше_название)/(ваше_название)_fonts/Fantasy_font.ttf"
 
 #   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
 # УДАЛИТЬ ПЕРЕД ВЫПУСКОМ МОДА!
@@ -775,15 +823,365 @@ $ mods["menu_(ваше_название)"] = "{=menu_(ваше_название)
       <!-- /БЛОК КОДА #1 -->
 
       <!--
+        КНОПКА «Перейти дальше»
+        data-goto="page-start"  — остаёмся на той же странице
+        data-anchor="block-sprites" — скроллим к следующему блоку
+      -->
+      <button class="next-step-btn" data-goto="page-start" data-anchor="block-sprites">
+        Шаг 2: Подготовка рабочей среды <span class="btn-arrow">→</span>
+      </button>
+
+      <div class="page-divider"></div>
+
+      <!-- ──────────────────────────────────────────────────────────
+           БЛОК КОДА #2 — Подготовка рабочей среды. sprite.rpy
+           id="block-sprites" — совпадает с data-anchor в сайдбаре
+      ─────────────────────────────────────────────────────────── -->
+      <div class="code-block" id="block-sprites">
+        <div class="code-block-header">
+          <span class="code-block-title">2. Подготовка рабочей среды — файл sprite.rpy</span>
+          <span class="code-lang">Ren'Py</span>
+        </div>
+
+        <div class="code-desc">
+          Создаём удобную структуру папок внутри мода и подключаем спрайты всех персонажей
+          в отдельном файле. Теперь главный <code>script.rpy</code> остаётся чистым,
+          а все изображения легко найти и добавить.
+        </div>
+
+        <div class="code-note" style="margin-top:16px">
+          <strong>📁 Где размещать:</strong>
+          <ol>
+            <li>Зайдите в папку мода: <code>game/mods/(ваше_название)/</code></li>
+            <li>Создайте следующие папки (если их ещё нет):
+              <ul style="margin-top:6px">
+                <li><code>images/sprites/day/</code> — дневные спрайты<br>
+                    <em style="color:var(--muted);font-size:12px">Внутри создайте папки: <code>dv/</code>, <code>un/</code>, <code>sl/</code>, <code>mi/</code> и т.д. по персонажам</em></li>
+                <li><code>images/sprites/night/</code> — ночные спрайты (такая же структура)</li>
+                <li><code>music/</code> — для музыки и звуков</li>
+                <li><code>script/</code> — для всех вспомогательных .rpy-файлов</li>
+              </ul>
+            </li>
+            <li>В папке <code>script/</code> создайте файл <code>sprite.rpy</code></li>
+            <li>Откройте его и вставьте весь код ниже в самом начале файла</li>
+          </ol>
+        </div>
+
+        <!--
+          БЛОК СКАЧИВАНИЯ АРХИВА СО СПРАЙТАМИ
+          Чтобы изменить ссылку — замените href у .download-btn
+          Чтобы изменить описание — отредактируйте .download-block-desc
+        -->
+        <div class="download-block">
+          <div class="download-block-info">
+            <div class="download-block-icon">📦</div>
+            <div class="download-block-title">Архив всех спрайтов персонажей</div>
+            <div class="download-block-desc">
+              Готовый сборник спрайтов «Бесконечного лета» — все персонажи, дневные и ночные варианты.
+              Скачайте архив, распакуйте в папку <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(155,110,181,0.15);color:var(--lavender);padding:1px 5px;border-radius:3px">images/sprites/</code> вашего мода.
+            </div>
+          </div>
+          <!--
+            ССЫЛКА НА АРХИВ — замените href на актуальную ссылку Google Drive
+            Прямые ссылки Google Drive иногда меняются — обновляйте при необходимости.
+          -->
+          <a class="download-btn"
+             href="https://drive.usercontent.google.com/download?id=1oZcmWOnNtzLKwMMjtcW38b_AG3uZbupp&export=download&authuser=4&confirm=t&uuid=72ad0b47-698c-49c4-8d7c-cd50fa8a9d1a&at=APcXIO02hNDP9tffJRuxNFn7a2Dq:1771939148089"
+             target="_blank" rel="noopener">
+            ⬇ Скачать архив
+          </a>
+        </div>
+
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+          <pre><code class="language-python">init:
+
+# =============================================
+#   ПРИМЕР ЗАПОЛНЕНИЯ:
+#   image dv_surprise = "mods/(ваше_название)/images/sprites/day/dv/dv_surprise.png"
+#   Замените "(ваш путь)" на полный путь к вашему файлу
+# =============================================
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Алиса — Дневные спрайты
+    image dv_surprise = "(ваш путь)"
+    image dv_smile = "(ваш путь)"
+    image dv_shy = "(ваш путь)"
+    image dv_shocked = "(ваш путь)"
+    image dv_scared = "(ваш путь)"
+    image dv_sad = "(ваш путь)"
+    image dv_rage = "(ваш путь)"
+    image dv_normal = "(ваш путь)"
+    image dv_laugh = "(ваш путь)"
+    image dv_guity = "(ваш путь)"
+    image dv_grin = "(ваш путь)"
+    image dv_cry = "(ваш путь)"
+    image dv_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Алиса — Ночные спрайты
+    image dv_surprise_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Алисы здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Виола — Дневные спрайты
+    image cs_smile = "(ваш путь)"
+    image cs_shy = "(ваш путь)"
+    image cs_normal = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Виола — Ночные спрайты
+    image cs_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Виолы здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Электроник — Дневные спрайты
+    image el_upset = "(ваш путь)"
+    image el_surprise = "(ваш путь)"
+    image el_smile = "(ваш путь)"
+    image el_serious = "(ваш путь)"
+    image el_shocked = "(ваш путь)"
+    image el_scared = "(ваш путь)"
+    image el_sad = "(ваш путь)"
+    image el_normal = "(ваш путь)"
+    image el_laugh = "(ваш путь)"
+    image el_grin = "(ваш путь)"
+    image el_fingal = "(ваш путь)"
+    image el_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Электроник — Ночные спрайты
+    image el_upset_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Электроника здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Мику — Дневные спрайты
+    image mi_upset = "(ваш путь)"
+    image mi_surprise = "(ваш путь)"
+    image mi_smile = "(ваш путь)"
+    image mi_shy = "(ваш путь)"
+    image mi_shocked = "(ваш путь)"
+    image mi_serious = "(ваш путь)"
+    image mi_scared = "(ваш путь)"
+    image mi_sad = "(ваш путь)"
+    image mi_rage = "(ваш путь)"
+    image mi_normal = "(ваш путь)"
+    image mi_laugh = "(ваш путь)"
+    image mi_happy = "(ваш путь)"
+    image mi_grin = "(ваш путь)"
+    image mi_dontlike = "(ваш путь)"
+    image mi_cry_smile = "(ваш путь)"
+    image mi_cry = "(ваш путь)"
+    image mi_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Мику — Ночные спрайты
+    image mi_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Мику здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Ольга Дмитриевна — Дневные спрайты
+    image mt_surprise = "(ваш путь)"
+    image mt_smile = "(ваш путь)"
+    image mt_shocked = "(ваш путь)"
+    image mt_scared = "(ваш путь)"
+    image mt_sad = "(ваш путь)"
+    image mt_rage = "(ваш путь)"
+    image mt_laugh = "(ваш путь)"
+    image mt_grin = "(ваш путь)"
+    image mt_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Ольга Дмитриевна — Ночные спрайты
+    image mt_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Ольги здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Женя — Дневные спрайты
+    image mz_smile = "(ваш путь)"
+    image mz_shy = "(ваш путь)"
+    image mz_normal = "(ваш путь)"
+    image mz_laugh = "(ваш путь)"
+    image mz_angry = "(ваш путь)"
+    image mz_bukal = "(ваш путь)"
+    image mz_rage = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Женя — Ночные спрайты
+    image mz_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Жени здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Пионер — Дневные спрайты
+    image pi_1_pioneer_smile = "(ваш путь)"
+    image pi_1_pioneer = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Пионер — Ночные спрайты
+    image pi_1_pioneer_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Пионера здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Шурик — Дневные спрайты
+    image sh_upset = "(ваш путь)"
+    image sh_surprise = "(ваш путь)"
+    image sh_smile = "(ваш путь)"
+    image sh_serious = "(ваш путь)"
+    image sh_scared = "(ваш путь)"
+    image sh_rage = "(ваш путь)"
+    image sh_normal_smile = "(ваш путь)"
+    image sh_normal = "(ваш путь)"
+    image sh_laugh = "(ваш путь)"
+    image sh_cry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Шурик — Ночные спрайты
+    image sh_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Шурика здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Славя — Дневные спрайты
+    image sl_tender = "(ваш путь)"
+    image sl_surprise = "(ваш путь)"
+    image sl_smile2 = "(ваш путь)"
+    image sl_smile = "(ваш путь)"
+    image sl_shy = "(ваш путь)"
+    image sl_serious = "(ваш путь)"
+    image sl_scared = "(ваш путь)"
+    image sl_sad = "(ваш путь)"
+    image sl_normal = "(ваш путь)"
+    image sl_laugh = "(ваш путь)"
+    image sl_happy = "(ваш путь)"
+    image sl_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Славя — Ночные спрайты
+    image sl_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Слави здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Лена — Дневные спрайты
+    image un_surprise = "(ваш путь)"
+    image un_smile3 = "(ваш путь)"
+    image un_smile2 = "(ваш путь)"
+    image un_smile = "(ваш путь)"
+    image un_shy = "(ваш путь)"
+    image un_shocked = "(ваш путь)"
+    image un_serious = "(ваш путь)"
+    image un_scared = "(ваш путь)"
+    image un_sad = "(ваш путь)"
+    image un_rage = "(ваш путь)"
+    image un_normal = "(ваш путь)"
+    image un_laugh = "(ваш путь)"
+    image un_grin = "(ваш путь)"
+    image un_cry_smile = "(ваш путь)"
+    image un_cry = "(ваш путь)"
+    image un_angry2 = "(ваш путь)"
+    image un_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Лена — Ночные спрайты
+    image un_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Лены здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Ульяна — Дневные спрайты
+    image us_surp3 = "(ваш путь)"
+    image us_smile = "(ваш путь)"
+    image us_sad = "(ваш путь)"
+    image us_normal = "(ваш путь)"
+    image us_laugh2 = "(ваш путь)"
+    image us_laugh = "(ваш путь)"
+    image us_grin = "(ваш путь)"
+    image us_surp1 = "(ваш путь)"
+    image us_shy = "(ваш путь)"
+    image us_surp2 = "(ваш путь)"
+    image us_shy2 = "(ваш путь)"
+    image us_calml = "(ваш путь)"
+    image us_upset = "(ваш путь)"
+    image us_fear = "(ваш путь)"
+    image us_dontlike = "(ваш путь)"
+    image us_cry2 = "(ваш путь)"
+    image us_cry = "(ваш путь)"
+    image us_angry = "(ваш путь)"
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Ульяна — Ночные спрайты
+    image us_smile_night = "(ваш путь)"
+    # Добавляйте остальные ночные спрайты Ульяны здесь
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Учёный 1 — Дневные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Учёный 1 — Ночные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Военный — Дневные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Военный — Ночные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Командир — Дневные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Командир — Ночные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Новый персонаж — Дневные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧
+
+#   ⇩⇩⇩      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇩⇩⇩
+# Новый персонаж — Ночные спрайты
+#   ⇧⇧⇧      ≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍≍       ⇧⇧⇧</code></pre>
+        </div>
+
+        <div class="code-demo">
+          <div class="code-demo-label">Демонстрация</div>
+          <!--
+            Замените заглушку на <img src="URL" alt="Демо" />
+            когда будет готова картинка или гифка для этого шага
+          -->
+          <div class="code-demo-placeholder">Гифка / скриншот появится здесь</div>
+        </div>
+      </div>
+      <!-- /БЛОК КОДА #2 -->
+
+      <!--
       ══════════════════════════════════════════════════════
-      ДОБАВИТЬ НОВЫЙ БЛОК КОДА В ЭТОТ РАЗДЕЛ:
-        1. Скопируйте блок .code-block выше целиком
-        2. Дайте ему уникальный id (например id="block-characters")
-        3. Заполните заголовок, описание, код, демо
-        4. Добавьте подпункт в сайдбар:
-           <li><button class="sidebar-sub-item"
-               data-page="page-start"
-               data-anchor="block-characters">Имя подпункта</button></li>
+      ДОБАВИТЬ СЛЕДУЮЩИЙ ШАГ:
+        1. Добавьте кнопку .next-step-btn с data-anchor="block-следующий"
+        2. Скопируйте .code-block и задайте ему новый id
+        3. Добавьте подпункт в сайдбар
       ══════════════════════════════════════════════════════
       -->
 
@@ -1137,37 +1535,14 @@ function showToast(msg, dur) {
    - Остальные .active снимаются
    - При необходимости скролл к якорю (data-anchor)
    ══════════════════════════════════════════════════════ */
-function showPage(pageId, anchorId) {
-  /* Скрываем все страницы */
-  document.querySelectorAll('.dev-page').forEach(p => p.classList.remove('active'));
+/* ══════════════════════════════════════════════════════
+   ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: раскрыть подпункты нужного раздела
+   Закрывает все остальные, открывает тот что соответствует pageId.
+   ══════════════════════════════════════════════════════ */
+function openSubFor(pageId) {
+  document.querySelectorAll('.sidebar-sub').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('open'));
 
-  /* Показываем нужную */
-  const page = document.getElementById(pageId);
-  if (page) {
-    page.classList.add('active');
-    /* Скролл страницы в начало */
-    window.scrollTo({ top:0, behavior:'instant' });
-  }
-
-  /* Если указан якорь — скроллим к конкретному блоку */
-  if (anchorId) {
-    /* Небольшая задержка чтобы страница успела отрисоваться */
-    setTimeout(() => {
-      const anchor = document.getElementById(anchorId);
-      if (anchor) anchor.scrollIntoView({ behavior:'smooth', block:'start' });
-    }, 50);
-  }
-
-  /* Обновляем активный пункт в сайдбаре */
-  document.querySelectorAll('.sidebar-item').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.page === pageId);
-  });
-  document.querySelectorAll('.sidebar-sub-item').forEach(btn => {
-    btn.classList.toggle('active',
-      btn.dataset.page === pageId && btn.dataset.anchor === anchorId);
-  });
-
-  /* Раскрываем подпункты активного раздела */
   document.querySelectorAll('.sidebar-item').forEach(btn => {
     if (btn.dataset.page === pageId && btn.dataset.hasSub) {
       const sub = document.getElementById(btn.dataset.hasSub);
@@ -1177,34 +1552,58 @@ function showPage(pageId, anchorId) {
   });
 }
 
-/* Клик по кнопке верхнего уровня в сайдбаре */
+/* ══════════════════════════════════════════════════════
+   ГЛАВНАЯ ФУНКЦИЯ НАВИГАЦИИ
+   pageId  — id нужного .dev-page
+   anchorId — (необязательно) id блока для прокрутки внутри страницы
+   ══════════════════════════════════════════════════════ */
+function showPage(pageId, anchorId) {
+  /* 1. Скрываем все страницы, показываем нужную */
+  document.querySelectorAll('.dev-page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (!page) return;
+  page.classList.add('active');
+
+  /* 2. Скролл: если якорь — к блоку, иначе в начало страницы */
+  if (anchorId) {
+    setTimeout(() => {
+      const anchor = document.getElementById(anchorId);
+      if (anchor) anchor.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 60);
+  } else {
+    window.scrollTo({ top:0, behavior:'instant' });
+  }
+
+  /* 3. Подсвечиваем активный пункт верхнего уровня */
+  document.querySelectorAll('.sidebar-item').forEach(btn => {
+    /* active — если страница совпадает И (нет якоря или это не подпункт) */
+    btn.classList.toggle('active', btn.dataset.page === pageId);
+  });
+
+  /* 4. Подсвечиваем активный подпункт */
+  document.querySelectorAll('.sidebar-sub-item').forEach(btn => {
+    btn.classList.toggle('active',
+      btn.dataset.page === pageId && btn.dataset.anchor === anchorId);
+  });
+
+  /* 5. Раскрываем подпункты нужного раздела */
+  openSubFor(pageId);
+}
+
+/* ══════════════════════════════════════════════════════
+   КЛИК ПО ПУНКТУ ВЕРХНЕГО УРОВНЯ В САЙДБАРЕ
+   ══════════════════════════════════════════════════════ */
 document.querySelectorAll('.sidebar-item').forEach(btn => {
   btn.addEventListener('click', () => {
-    const pageId = btn.dataset.page;
-    const subId  = btn.dataset.hasSub;
-
-    /* Переключаем страницу */
-    showPage(pageId, null);
-
-    /* Переключаем раскрытие подпунктов */
-    if (subId) {
-      const sub = document.getElementById(subId);
-      const isOpen = sub.classList.contains('open');
-      /* Закрываем все другие подпункты */
-      document.querySelectorAll('.sidebar-sub').forEach(s => s.classList.remove('open'));
-      document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('open'));
-      if (!isOpen) {
-        sub.classList.add('open');
-        btn.classList.add('open');
-      }
-    }
-
-    /* На мобиле — закрываем сайдбар после выбора */
+    showPage(btn.dataset.page, null);
+    /* На мобиле закрываем drawer */
     closeSidebar();
   });
 });
 
-/* Клик по подпункту (с прокруткой к якорю) */
+/* ══════════════════════════════════════════════════════
+   КЛИК ПО ПОДПУНКТУ (переход + скролл к якорю)
+   ══════════════════════════════════════════════════════ */
 document.querySelectorAll('.sidebar-sub-item').forEach(btn => {
   btn.addEventListener('click', () => {
     showPage(btn.dataset.page, btn.dataset.anchor);
@@ -1212,18 +1611,15 @@ document.querySelectorAll('.sidebar-sub-item').forEach(btn => {
   });
 });
 
-/* Кнопка «Начать создание» на приветственной странице */
+/* ══════════════════════════════════════════════════════
+   КНОПКИ «Начать создание» и «Перейти дальше» (data-goto)
+   Используются на приветственной странице и между блоками.
+   data-goto="page-id" — id страницы назначения
+   data-anchor="block-id" — (необязательно) якорь внутри страницы
+   ══════════════════════════════════════════════════════ */
 document.querySelectorAll('[data-goto]').forEach(btn => {
   btn.addEventListener('click', () => {
-    showPage(btn.dataset.goto, null);
-    /* Раскрываем подпункты этого раздела */
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      if (item.dataset.page === btn.dataset.goto && item.dataset.hasSub) {
-        const sub = document.getElementById(item.dataset.hasSub);
-        if (sub) sub.classList.add('open');
-        item.classList.add('open');
-      }
-    });
+    showPage(btn.dataset.goto, btn.dataset.anchor || null);
   });
 });
 
